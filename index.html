@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IT 상식 &amp; 기초 코딩 퀴즈</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2216%22 fill=%22%234b9be0%22/%3E%3Ccircle cx=%2230%22 cy=%2231%22 r=%2215%22 fill=%22none%22 stroke=%22%23fff%22 stroke-width=%227%22/%3E%3Cpath d=%22M31 33l14 13%22 stroke=%22%23fff%22 stroke-width=%227%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M50 8l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z%22 fill=%22%23ffd257%22/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<style>
+  @font-face{font-family:'KoPubWorld Dotum';font-style:normal;font-weight:400;font-display:swap;ascent-override:88%;descent-override:24%;line-gap-override:0%;
+    src:local('KoPubWorldDotum Medium'),local('KoPubWorldDotumMedium'),local('KoPubWorld돋움체 Medium'),
+        url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Medium.woff2') format('woff2'),url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Medium.woff') format('woff')}
+  @font-face{font-family:'KoPubWorld Dotum';font-style:normal;font-weight:700;font-display:swap;ascent-override:88%;descent-override:24%;line-gap-override:0%;
+    src:local('KoPubWorldDotum Bold'),local('KoPubWorldDotumBold'),local('KoPubWorld돋움체 Bold'),
+        url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Bold.woff2') format('woff2'),url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Bold.woff') format('woff')}
+  :root{
+    --font:'KoPubWorld Dotum','KoPubWorld돋움체','KoPub돋움체','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+    --ink:#33303c; --ink-soft:#686472; --accent:#5d4dbe; --line:#b6bdec; --line-hover:#9aa2e2;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{
+    font-family:var(--font);color:var(--ink);background-color:#dbe2f8;
+    background-image:linear-gradient(180deg,#e6ebfb 0%,#d8dff8 55%,#cdd6f4 100%);
+    background-size:100% 100%;background-attachment:fixed;min-height:100vh;
+    line-height:1.4;letter-spacing:-0.01em;word-break:keep-all;
+  }
+  main{max-width:680px;margin:0 auto;padding:28px 16px 48px}
+  .top{display:flex;align-items:center;gap:14px;margin-bottom:20px;padding:0 4px}
+  .mascot{flex:none;font-size:2.3rem;width:62px;height:62px;border-radius:20px;background:#ffffff;display:grid;place-items:center;border:2.2px solid #bcb7c4;box-shadow:none;animation:bob 2.6s ease-in-out infinite}
+  .eyebrow{display:inline-block;font-size:.85rem;font-weight:700;color:var(--accent);margin-bottom:6px;white-space:nowrap;max-width:100%}
+  h1{font-weight:800;font-size:1.7rem;line-height:1.25}
+  h1 .accent{color:var(--accent)}
+  .top p{color:var(--ink-soft);font-size:.95rem}
+  .guide{background:#ffffff;border-radius:22px;padding:14px 18px;margin-bottom:18px;box-shadow:0 6px 0 var(--line)}
+  .guide b{color:var(--accent)}
+  .list{display:grid;gap:14px}
+  .set{
+    display:flex;gap:16px;align-items:center;text-decoration:none;color:inherit;
+    background:#ffffff;border:2.5px solid var(--line);border-radius:24px;padding:18px 20px;
+    box-shadow:0 6px 0 var(--line);transition:transform .12s, box-shadow .12s, border-color .12s;
+  }
+  .set:hover{transform:translateY(-3px);border-color:var(--line-hover);box-shadow:0 9px 0 var(--line-hover)}
+  .set:active{transform:translateY(2px);box-shadow:0 3px 0 var(--line)}
+  .set:focus-visible{outline:3px solid #bfb4e4;outline-offset:3px}
+  .ic{flex:none;width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:1.9rem}
+  .bd{flex:1;min-width:0}
+  .kicker{display:block;font-size:.8rem;font-weight:700}
+  .tt{display:block;font-size:1.2rem;font-weight:800;line-height:1.35}
+  .ds{display:block;font-size:.92rem;color:var(--ink-soft)}
+  .tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+  .tags span{font-size:.78rem;font-weight:700;border-radius:999px;padding:2px 10px;background:#f6f4fa;color:#5a4f7e}
+  .go{flex:none;font-size:1.3rem;color:#bfb4e4;font-weight:800}
+  footer{color:var(--ink-soft);font-size:.85rem;margin-top:22px;padding-left:4px}
+  .credit{display:block;margin-top:4px;font-weight:700;color:var(--ink)}
+  @keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-6px) rotate(3deg)}}
+  @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+  @media (max-width:560px){
+    h1{font-size:1.4rem}
+    .eyebrow{font-size:min(.85rem,3.4vw)}
+    .mascot{width:52px;height:52px;font-size:1.9rem;border-radius:16px}
+    .set{padding:14px 14px;gap:12px}
+    .ic{width:48px;height:48px;font-size:1.6rem;border-radius:14px}
+    .go{display:none}
+  }
+  .globe{width:1em;height:1em;display:block}
+  /* ---------- 학번, 이름 입력과 점수 보내기 ---------- */
+  .ms-who{background:#ffffff;border-radius:28px;padding:22px 28px 24px;margin:0 0 20px;box-shadow:0 5px 0 #ddd7e6;font-family:var(--font);text-align:left;word-break:keep-all}
+  .ms-who.set{display:flex;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 10px 8px 14px;box-shadow:none;border:2px solid #ddd7e6;width:max-content;max-width:100%}
+  .ms-who-me{font-size:.95rem;color:#686472}
+  .ms-who-me b{color:#33303c}
+  .ms-edit{font:inherit;font-size:.82rem;font-weight:700;color:#5a4f7e;background:#f6f4fa;border:none;border-radius:999px;padding:3px 12px;cursor:pointer}
+  .ms-who-t{display:block;font-weight:800;font-size:1.02rem;margin-bottom:12px;color:#33303c}
+  .ms-who-row{display:flex;gap:8px;flex-wrap:wrap}
+  .ms-who select,.ms-who input{font:inherit;font-size:1rem;padding:9px 12px;border-radius:14px;border:2px solid #ddd7e6;background:#ffffff;color:#33303c;min-width:0}
+  .ms-who select,.ms-who input{flex:1 1 0}
+  .ms-who .ms-gc{flex:0 0 9.2em}
+  .ms-who .ms-num{flex:0 0 6.4em}
+  @media (max-width:560px){ .ms-who{padding:18px 16px 20px;border-radius:22px} .ms-who select,.ms-who input{padding:9px 8px} .ms-who .ms-gc{flex:1.5 1 0} .ms-who .ms-num{flex:1 1 0} .ms-who .ms-name{flex:1.3 1 0} .ms-who .ms-btn{flex:1 0 100%} }
+  .ms-who select:focus,.ms-who input:focus{outline:3px solid #bfb4e4;outline-offset:1px}
+  .ms-who .ms-btn{padding:0 34px;font-size:1rem;border-radius:14px;align-self:stretch;min-height:44px;box-shadow:inset 0 -4px 0 var(--ms-deep)}
+  .ms-who .ms-btn:active{transform:none;box-shadow:inset 0 -1px 0 var(--ms-deep)}
+  .ms-ok{flex-basis:100%;font-size:.9rem;font-weight:700;color:#3d6e56}
+  .ms-who .ms-err{color:#b25d6c;font-size:.88rem;margin-top:6px}
+  .ms-who .ms-err:empty{display:none}
+  .ms-btn{font-family:var(--font);font-weight:700;font-size:1.05rem;border:none;border-radius:999px;padding:11px 22px;cursor:pointer;background:var(--ms-accent);color:#ffffff;box-shadow:0 4px 0 var(--ms-deep)}
+  .ms-btn:active{transform:translateY(3px);box-shadow:0 1px 0 var(--ms-deep)}
+  .ms-btn:disabled{opacity:.45;cursor:default;transform:none;box-shadow:0 4px 0 var(--ms-deep)}
+  .ms-btn:focus-visible{outline:3px solid #bfb4e4;outline-offset:3px}
+  .ms-nav{display:grid;gap:10px;margin:0 0 20px}
+  .ms-next{justify-self:start;font-size:1.1rem;padding:13px 26px}
+  .ms-nav-t{font-size:.9rem;font-weight:700;color:#686472;margin-top:8px}
+  .ms-nav-list{display:flex;flex-wrap:wrap;gap:10px}
+  .ms-other{background:#ffffff;color:#33303c;border:2px solid #ddd7e6;box-shadow:0 4px 0 #ddd7e6;font-size:1rem;padding:10px 18px}
+  .ms-other:hover{border-color:#c9c2d5;box-shadow:0 4px 0 #c9c2d5}
+  .ms-other:active{box-shadow:0 1px 0 #ddd7e6}
+  .ms-msg.ok{color:#3d6e56;font-weight:700;font-size:.98rem}
+  /* 결과 화면의 다시 풀기는 글자 메뉴 */
+  #result .result-actions{gap:6px 22px;margin-top:4px}
+  #result .result-actions .btn{background:none !important;color:var(--ink-soft) !important;box-shadow:none !important;border:none !important;padding:4px 0;font-size:.98rem;font-weight:700;text-decoration:underline;text-underline-offset:4px;text-decoration-thickness:1.5px}
+  #result .result-actions .btn:hover{color:var(--ink) !important;filter:none}
+  #result .result-actions .btn:active{transform:none}
+  .ms-cards{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .ms-card{display:flex;align-items:center;gap:12px;width:100%;text-align:left;font:inherit;color:#33303c;cursor:pointer;background:#ffffff;border:2px solid #ddd7e6;border-radius:18px;padding:12px 14px;box-shadow:0 4px 0 #ddd7e6;transition:transform .12s,box-shadow .12s,border-color .12s}
+  .ms-card:hover:not(:disabled){transform:translateY(-2px);border-color:#c9c2d5;box-shadow:0 6px 0 #c9c2d5}
+  .ms-card:focus-visible{outline:3px solid #bfb4e4;outline-offset:3px}
+  .ms-card.cur{opacity:.45;filter:grayscale(1);cursor:default;box-shadow:none;background:#f6f5f8}
+  .ms-ic{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:1.45rem}
+  .ms-ic .globe{width:1em;height:1em;display:block}
+  .ms-cb{flex:1;min-width:0;display:grid;gap:1px}
+  .ms-cb small{font-size:.75rem;font-weight:700;color:#686472}
+  .ms-cb b{font-size:1rem;font-weight:800;line-height:1.3}
+  .ms-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
+  .ms-tags>span{font-size:.72rem;font-weight:700;border-radius:999px;padding:1px 8px;background:#f6f4fa;color:#5a4f7e}
+  .ms-tags .st{color:#efb72d;letter-spacing:1px}
+  .ms-go{flex:none;color:#bfb4e4;font-weight:800;font-size:1.2rem}
+  @media (max-width:560px){ .ms-cards{grid-template-columns:1fr} }
+  .ms-panel.compact{padding:14px 18px}
+  .ms-sum{list-style:none;display:grid}
+  .ms-sum li{display:grid;grid-template-columns:5.2em auto 1fr;align-items:baseline;gap:10px;padding:6px 0;border-bottom:1px solid #eeeaf2}
+  .ms-sum li:last-child{border-bottom:none}
+  .ms-sum span{color:#686472;font-weight:700}
+  .ms-sum b{font-size:1.1rem;font-weight:800}
+  .ms-sum small{color:#8a8594;font-size:.85rem;text-align:right}
+  .ms-act{margin-top:6px}
+  .ms-wrap{display:grid;gap:14px;margin-top:18px}
+  .ms-panel{background:#ffffff;border-radius:22px;padding:16px 18px;box-shadow:0 6px 0 #ddd7e6;text-align:left;word-break:keep-all}
+  .ms-panel h3{font-size:1.05rem;font-weight:800;margin-bottom:8px}
+  .ms-rows{list-style:none;display:grid;margin-bottom:10px}
+  .ms-rows li{display:flex;justify-content:space-between;gap:10px;font-size:.95rem;padding:5px 0;border-bottom:1px solid #eeeaf2}
+  .ms-rows li span{color:#686472}
+  .ms-rows li.no b{color:#a8a3b0;font-weight:500}
+  .ms-total{margin-bottom:12px}
+  .ms-total b{font-weight:800}
+  .ms-act{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+  .ms-left{font-size:.88rem;color:#686472}
+  .ms-note,.ms-msg{font-size:.9rem;color:#686472;margin-top:8px}
+  .ms-msg:empty{display:none}
+  .card .ms-wrap{margin:0 0 20px}
+  .card .ms-panel{box-shadow:none;background:#f7f2e6}
+  .card .ms-rows li{border-bottom-color:#e6dfcd}
+  a.credit{width:max-content;color:var(--ink);text-decoration:none}
+  a.credit:hover{text-decoration:underline;text-underline-offset:3px}
+  /* 전송 안내 강조, 안내 상자는 그림자 없이 테두리만 */
+  .ms-status{font-size:1.08rem;font-weight:800;padding:12px 16px;border-radius:14px;margin:0 0 14px;border:2px solid #ddd7e6;background:#ffffff;color:#33303c}
+  .ms-status.wait{background:#eaf3fb;border-color:#b9d4ee;color:#2d5f8f}
+  .ms-status.ok{background:#e8f4ed;border-color:#a8cbb9;color:#2f6b4d}
+  .ms-status.fail{background:#fbeef0;border-color:#ebc9d0;color:#9a4656}
+  .ms-who{box-shadow:none;border:2px solid #ddd7e6}
+  .ms-panel{box-shadow:none;border:2px solid #ddd7e6}
+  .card .ms-panel{border:none}
+  .guide{box-shadow:none !important;border:2px solid #ddd7e6 !important}
+  /* 첫 화면: 테두리, 그림자를 블루 바이올렛으로 */
+  .mascot{border-color:#959ddb !important}
+  .ms-who,.ms-panel,.guide,.ms-who select,.ms-who input{border-color:#b6bdec !important}
+  .set{box-shadow:0 6px 0 #b2b9ea}
+  .set:active{box-shadow:0 3px 0 #b2b9ea}
+  .ms-sum li{border-bottom-color:#d9ddf6}
+</style>
+</head>
+<body>
+<main>
+  <header class="top">
+    <div class="mascot" aria-hidden="true">💻</div>
+    <div>
+      <span class="eyebrow">미림마이스터고 디자인과 재학생을 위한</span>
+      <h1>IT 상식 &amp; <span class="accent">기초 코딩</span> 퀴즈</h1>
+      <p>인터넷과 IT 서비스, HTML과 CSS, 파이썬</p>
+    </div>
+  </header>
+  <div class="guide">풀고 싶은 묶음을 골라 보자. 묶음마다 <b>워밍업부터 차례대로</b> 풀어 보자. 모든 문제에 힌트가 함께 보입니다.</div>
+  <nav class="list" aria-label="퀴즈 묶음">
+    <a class="set" href="internet_it_quiz.html">
+      <span class="ic" style="background:#e6f3ef" aria-hidden="true">🛰️</span>
+      <span class="bd">
+        <span class="kicker" style="color:#2a7365">웹을 공개하고 운영하기</span>
+        <span class="tt">인터넷과 IT 서비스 퀴즈</span>
+        <span class="ds">서버와 호스팅, 도메인, 깃허브, 워드프레스, GA4</span>
+        <span class="tags"><span>8단계</span><span>30문제</span><span>비용 감 잡기</span></span>
+      </span>
+      <span class="go" aria-hidden="true">›</span>
+    </a>
+    <a class="set" href="html_quiz_all.html">
+      <span class="ic" style="background:#ecf3f9" aria-hidden="true"><svg class="globe" viewBox="0 0 64 64" aria-hidden="true"><defs><clipPath id="gC"><circle cx="32" cy="32" r="27"/></clipPath><clipPath id="gE"><ellipse cx="32" cy="32" rx="11" ry="27"/></clipPath></defs><g clip-path="url(#gC)"><rect x="5" y="5" width="27" height="14" fill="#b3d8f8"/><rect x="32" y="5" width="27" height="14" fill="#5595dc"/><rect x="5" y="19" width="27" height="13" fill="#8fbeed"/><rect x="32" y="19" width="27" height="13" fill="#427ec8"/><rect x="5" y="32" width="27" height="13" fill="#6ba5e3"/><rect x="32" y="32" width="27" height="13" fill="#3368b1"/><rect x="5" y="45" width="27" height="14" fill="#4b8cd6"/><rect x="32" y="45" width="27" height="14" fill="#24529a"/></g><g clip-path="url(#gE)"><rect x="21" y="5" width="11" height="14" fill="#94c2ef"/><rect x="32" y="5" width="11" height="14" fill="#74abe5"/><rect x="21" y="19" width="11" height="13" fill="#70a8e4"/><rect x="32" y="19" width="11" height="13" fill="#5092db"/><rect x="21" y="32" width="11" height="13" fill="#4d8fd9"/><rect x="32" y="32" width="11" height="13" fill="#407bc5"/><rect x="21" y="45" width="11" height="14" fill="#3e78c2"/><rect x="32" y="45" width="11" height="14" fill="#3165ae"/></g><g fill="none" stroke="#ffffff" stroke-width="3"><ellipse cx="32" cy="32" rx="11" ry="27"/><path d="M5 32H59M8.5 19H55.5M8.5 45H55.5M32 5V59"/></g></svg></span>
+      <span class="bd">
+        <span class="kicker" style="color:#406ba1">웹페이지 만들기</span>
+        <span class="tt">HTML, CSS 퀴즈</span>
+        <span class="ds">태그와 문서 구조, 시안을 웹으로 옮기는 CSS 레이아웃까지</span>
+        <span class="tags"><span>퀴즈 4개</span><span>75문제</span><span>휴대폰, PC 미리보기</span></span>
+      </span>
+      <span class="go" aria-hidden="true">›</span>
+    </a>
+    <a class="set" href="python_quiz_all.html">
+      <span class="ic" style="background:#f8eaf0" aria-hidden="true">🐍</span>
+      <span class="bd">
+        <span class="kicker" style="color:#bd426e">프로그래밍 기초</span>
+        <span class="tt">파이썬 기초 퀴즈</span>
+        <span class="ds">파이썬이 무엇인지부터 조건문, 반복문까지</span>
+        <span class="tags"><span>퀴즈 4개</span><span>60문제</span><span>OX, 빈칸, 선택문 순위</span></span>
+      </span>
+      <span class="go" aria-hidden="true">›</span>
+    </a>
+  </nav>
+  <footer><a class="credit" href="https://www.instagram.com/Make.a.long.term.memory" target="_blank" rel="noopener">by Make a long term memory</a></footer>
+</main>
+<script src="score-config.js"></script>
+<script>
+/* mirim-score-v1 */
+/* 학번, 이름 입력 + 영역별 점수 모아 보기 + 퀴즈를 끝까지 풀면 3초 뒤 구글 시트로 자동 전송(퀴즈마다 3번) */
+(function(){
+  var LIMIT = 3;
+  var AREAS = {
+    it:     { label: "IT 지식", quizzes: [["it", "인터넷과 IT 서비스", 30]] },
+    html:   { label: "HTML",    quizzes: [["ox", "HTML OX", 15], ["blank", "HTML 빈칸 채우기", 10], ["basics", "HTML 첫걸음", 20], ["layout", "CSS 레이아웃", 30]] },
+    python: { label: "파이썬",  quizzes: [["ox", "파이썬 OX", 15], ["blank", "파이썬 빈칸 채우기", 10], ["basics", "파이썬 첫걸음", 30], ["ifq", "파이썬 선택문", 5]] }
+  };
+  var cfg = {}, MSG = {};
+
+  function jget(store, k, d){ try{ var v = store.getItem(k); return v ? JSON.parse(v) : d; }catch(e){ return d; } }
+  function jset(store, k, v){ try{ store.setItem(k, JSON.stringify(v)); }catch(e){} }
+  function esc(s){ return String(s).replace(/[&<>"]/g, function(c){ return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]; }); }
+  var KEEP = 3 * 60 * 60 * 1000;  // 학번은 이 기기에 3시간 동안 기억해요(실습실 PC를 다음 시간에 다른 학생이 쓸 수 있어서)
+  function student(){ var s = jget(localStorage, "mirim-student", null); return s && s.cls && Date.now() - (s.at || 0) < KEEP ? s : null; }
+  function key(st){ return st.id + "|" + st.name; }
+  function label(st){ return st.label || st.id; }
+  function results(id){ return jget(localStorage, "mirim-results", {})[id] || {}; }
+  function sentCount(id, area){ var s = jget(localStorage, "mirim-sent", {}); return (s[id] && s[id][area]) || 0; }
+  function setSent(id, area, n){ var s = jget(localStorage, "mirim-sent", {}); s[id] = s[id] || {}; s[id][area] = n; jset(localStorage, "mirim-sent", s); }
+
+  function summary(id, area){
+    var A = AREAS[area], r = results(id)[area] || {}, c = 0, t = 0, done = 0, parts = [], rows = [];
+    A.quizzes.forEach(function(q){
+      var x = r[q[0]]; t += q[2];
+      if (x){ c += x.c; done++; parts.push(q[1] + " " + x.c + "/" + x.t); rows.push([q[1], x.c + " / " + x.t, true]); }
+      else { parts.push(q[1] + " 미응시"); rows.push([q[1], "아직 안 풀었습니다", false]); }
+    });
+    return { c: c, t: t, done: done, score: Math.round(c / t * 100), detail: parts.join(", "), rows: rows };
+  }
+
+  /* ---------- 학번, 이름 입력 (제목 아래 칸) ---------- */
+  var editing = false, savedAt = 0;
+  var GC = ["15", "16", "25", "26", "35", "36"];
+  function nums(from, to, unit){ var o = ""; for (var i = from; i <= to; i++) o += '<option value="' + i + '">' + i + unit + "</option>"; return o; }
+  function whoBox(){
+    var box = document.querySelector(".ms-who");
+    if (!box){
+      var anchor = cfg.whoAfter && document.querySelector(cfg.whoAfter);
+      if (!anchor) return null;
+      box = document.createElement("div");
+      box.className = "ms-who";
+      anchor.insertAdjacentElement("afterend", box);
+      box.addEventListener("click", function(e){ if (e.target.closest(".ms-edit")){ editing = true; renderWho(); focusWho(); } });
+      box.addEventListener("submit", function(e){
+        e.preventDefault();
+        var gc = box.querySelector(".ms-gc").value, n = box.querySelector(".ms-num").value, name = box.querySelector(".ms-name").value.replace(/\s+/g, " ").trim();
+        var err = box.querySelector(".ms-err");
+        if (!gc){ err.textContent = "학년, 반을 고르자."; box.querySelector(".ms-gc").focus(); return; }
+        if (!n){ err.textContent = "번호를 고르자."; box.querySelector(".ms-num").focus(); return; }
+        if (!name){ err.textContent = "이름을 입력하자."; box.querySelector(".ms-name").focus(); return; }
+        var g = gc.charAt(0), c = gc.charAt(1);
+        var id = gc + (n < 10 ? "0" : "") + n, lb = g + "학년 " + c + "반 " + n + "번";
+        jset(localStorage, "mirim-student", { id: id, grade: +g, cls: +c, num: +n, label: lb, name: name, at: Date.now() });
+        editing = false;
+        savedAt = Date.now();
+        setTimeout(renderWho, 3200);
+        var ni = document.getElementById("nameInput");
+        if (ni) ni.value = (lb + " " + name).slice(0, 12);
+        render();
+        if (window.parent !== window) window.parent.postMessage({ mirimScore: true }, "*");
+      });
+    }
+    return box;
+  }
+  function renderWho(){
+    var box = whoBox(); if (!box) return;
+    var st = student();
+    var justSaved = Date.now() - savedAt < 3000;
+    if (st && !editing && cfg.hideWhenSet && !justSaved){ box.style.display = "none"; return; }
+    box.style.display = "";
+    if (st && !editing){
+      box.classList.add("set");
+      box.innerHTML = '<span class="ms-who-me">🙋 <b>' + esc(label(st)) + "</b> " + esc(st.name) + '</span><button type="button" class="ms-edit">바꾸기</button>' +
+        (justSaved ? '<span class="ms-ok" role="status">✅ 학번과 이름이 입력되었습니다.</span>' : "");
+      return;
+    }
+    box.classList.remove("set");
+    box.innerHTML = '<form><b class="ms-who-t">학년, 반, 번호, 이름을 입력하세요</b>' +
+      '<div class="ms-who-row"><select class="ms-gc" aria-label="학년, 반"><option value="">학년, 반</option>' + GC.map(function(v){ return '<option value="' + v + '">' + v.charAt(0) + "학년 " + v.charAt(1) + "반</option>"; }).join("") + "</select>" +
+      '<select class="ms-num" aria-label="번호"><option value="">번호</option>' + nums(1, 20, "번") + "</select>" +
+      '<input class="ms-name" maxlength="10" autocomplete="off" placeholder="이름" aria-label="이름">' +
+      '<button class="ms-btn" type="submit">확인</button></div>' +
+      '<p class="ms-err"></p></form>';
+    if (st && st.grade){ box.querySelector(".ms-gc").value = "" + st.grade + st.cls; box.querySelector(".ms-num").value = st.num; box.querySelector(".ms-name").value = st.name; }
+  }
+  function focusWho(){ var b = document.querySelector(".ms-who"); if (b){ var f = b.querySelector(".ms-gc"); if (f){ f.focus(); b.scrollIntoView({ block: "center", behavior: "smooth" }); } } }
+  function openGate(){ editing = !!student(); renderWho(); focusWho(); }
+
+  /* ---------- 점수 모아 보기 ---------- */
+  function quizInfo(area, k){ var q = AREAS[area].quizzes.filter(function(x){ return x[0] === k; })[0]; return q ? { key: q[0], label: q[1], total: q[2] } : null; }
+  function sendKey(area, k){ return area + ":" + k; }
+  function renderPanels(){
+    var wrap = document.querySelector(".ms-wrap");
+    if (!wrap){
+      var anchor = cfg.panelAfter ? document.querySelector(cfg.panelAfter) : null;
+      var before = cfg.panelBefore ? document.querySelector(cfg.panelBefore) : null;
+      if (!anchor && !before) return;
+      wrap = document.createElement("div");
+      wrap.className = "ms-wrap";
+      if (before) before.insertAdjacentElement("beforebegin", wrap); else anchor.insertAdjacentElement("afterend", wrap);
+      wrap.addEventListener("click", function(e){ if (e.target.closest(".ms-send")) send(); });
+    }
+    var st = student();
+    if (cfg.compact){
+      // 첫 화면, 목차: 영역별 한 줄 요약만
+      wrap.innerHTML = '<section class="ms-panel compact"><h3>📊 내 점수</h3>' + (st ?
+        '<ul class="ms-sum">' + cfg.areas.map(function(area){
+          var s = summary(key(st), area), n = AREAS[area].quizzes.length;
+          return "<li><span>" + AREAS[area].label + "</span><b>" + (s.done ? s.score + "점" : "-") + "</b><small>" + s.c + "/" + s.t + "문제, 퀴즈 " + s.done + "/" + n + "</small></li>";
+        }).join("") + "</ul>" : '<p class="ms-note">학년, 반, 번호, 이름을 입력하면 점수가 모입니다.</p>') + "</section>";
+      return;
+    }
+    var area = cfg.areas[0], A = AREAS[area];
+    if (!st){ wrap.innerHTML = '<section class="ms-panel"><h3>📊 내 점수, ' + A.label + '</h3><p class="ms-note">학년, 반, 번호, 이름을 입력하면 점수가 모입니다.</p></section>'; return; }
+    var s = summary(key(st), area), qi = cfg.quiz ? quizInfo(area, cfg.quiz) : null;
+    var left = qi ? Math.max(0, LIMIT - sentCount(key(st), sendKey(area, qi.key))) : 0;
+    var m = MSG.text || "";
+    var kind = /^✅/.test(m) ? "ok" : /^⚠️/.test(m) ? "fail" : m ? "wait" : "";
+    wrap.innerHTML = '<section class="ms-panel">' +
+      (qi && m ? '<p class="ms-status ' + kind + '" role="status">' + esc(m) + "</p>" : "") +
+      "<h3>📊 내 점수, " + A.label + "</h3>" +
+      '<ul class="ms-rows">' + s.rows.map(function(r){ return '<li class="' + (r[2] ? "" : "no") + '"><span>' + r[0] + "</span><b>" + r[1] + "</b></li>"; }).join("") + "</ul>" +
+      '<div class="ms-total">합계 <b>' + s.c + "</b> / " + s.t + "문제, 100점 환산 <b>" + s.score + "점</b></div>" +
+      (qi ? '<div class="ms-act">' + (MSG.fail && left ? '<button class="ms-btn ms-send" type="button">📤 다시 보내기</button>' : "") +
+        '<span class="ms-left">이 퀴즈 남은 전송 ' + left + "번</span></div>" : "") +
+      "</section>";
+  }
+
+  /* 퀴즈를 끝까지 풀면 3초 뒤 자동 전송 */
+  var timer = null;
+  function setMsg(text, fail){ MSG = { text: text, fail: !!fail }; renderPanels(); }
+  function countdown(){
+    clearInterval(timer);
+    var st = student(), area = cfg.areas[0], qi = cfg.quiz && quizInfo(area, cfg.quiz);
+    if (!qi) return;
+    if (!st){ setMsg("학년, 반, 번호, 이름을 입력해야 전송됩니다.", false); return; }
+    if (!window.SCORE_URL){ setMsg("⚠️ 점수 받을 주소가 아직 설정되지 않았습니다. 선생님께 알리자.", false); return; }
+    if (LIMIT - sentCount(key(st), sendKey(area, qi.key)) <= 0){ setMsg("이 퀴즈는 3번 모두 전송했습니다.", false); return; }
+    var n = 3;
+    setMsg(n + "초 후에 전송됩니다.");
+    timer = setInterval(function(){
+      n--;
+      if (n > 0) setMsg(n + "초 후에 전송됩니다.");
+      else { clearInterval(timer); send(); }
+    }, 1000);
+  }
+  function send(){
+    var st = student(), area = cfg.areas[0], A = AREAS[area], qi = cfg.quiz && quizInfo(area, cfg.quiz);
+    if (!st || !qi || !window.SCORE_URL) return;
+    var sk = sendKey(area, qi.key);
+    if (LIMIT - sentCount(key(st), sk) <= 0) return;
+    var x = (results(key(st))[area] || {})[qi.key];
+    if (!x) return;
+    var s = summary(key(st), area);
+    setMsg("전송하는 중…");
+    fetch(window.SCORE_URL, { method: "POST", body: JSON.stringify({
+      id: st.id, grade: st.grade, cls: st.cls, num: st.num, name: st.name, area: A.label, quiz: qi.label,
+      correct: x.c, total: x.t, score: Math.round(x.c / x.t * 100), areaScore: s.score, detail: s.detail }) })
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        var t = new Date(), hm = t.getHours() + ":" + String(t.getMinutes()).padStart(2, "0");
+        if (d && d.ok){ setSent(key(st), sk, d.count); setMsg("✅ 전송되었습니다. (" + hm + ", 이 퀴즈 3번 중 " + d.count + "번째)"); }
+        else if (d && d.error === "limit"){ setSent(key(st), sk, LIMIT); setMsg("이 퀴즈는 3번 모두 전송했습니다."); }
+        else setMsg("⚠️ 전송하지 못했습니다: " + ((d && d.error) || "알 수 없는 오류"), true);
+        if (window.parent !== window) window.parent.postMessage({ mirimScore: true }, "*");
+      })
+      .catch(function(){ setMsg("⚠️ 전송하지 못했습니다. 아래 버튼으로 다시 보내 보자. 계속 안 되면 선생님께 알리자.", true); });
+  }
+
+  /* ---------- 결과 화면: 이 파트의 퀴즈 목록 (방금 푼 퀴즈는 흐리게) ---------- */
+  function go(item){
+    if (item.key){ if (window.parent !== window) window.parent.postMessage({ mirimOpen: item.key }, "*"); return; }
+    var url = new URL(item.href, document.baseURI).href;
+    try{ window.top.location.href = url; }catch(e){ window.location.href = url; }
+  }
+  function renderNav(){
+    if (!cfg.nav || document.querySelector(".ms-nav")) return;
+    var before = document.querySelector(cfg.panelBefore || "#result .result-actions");
+    if (!before) return;
+    var nav = document.createElement("div");
+    nav.className = "ms-nav";
+    var items = cfg.nav.items;
+    nav.innerHTML = '<p class="ms-nav-t">' + esc(cfg.nav.title) + '</p><div class="ms-cards">' + items.map(function(it, i){
+      var cur = it.current;
+      return '<button type="button" class="ms-card' + (cur ? " cur" : "") + '" data-i="' + i + '"' + (cur ? " disabled" : "") + ">" +
+        '<span class="ms-ic" style="background:' + it.bg + '" aria-hidden="true">' + it.icon + "</span>" +
+        '<span class="ms-cb"><small>' + esc(cur ? "방금 푼 퀴즈" : it.step) + "</small><b>" + esc(it.title) + "</b>" +
+        '<span class="ms-tags">' + it.tags.map(function(g){ return "<span>" + g + "</span>"; }).join("") + "</span></span>" +
+        (cur ? "" : '<span class="ms-go" aria-hidden="true">›</span>') + "</button>";
+    }).join("") + "</div>";
+    nav.addEventListener("click", function(e){ var b = e.target.closest("[data-i]"); if (b && !b.disabled) go(items[+b.dataset.i]); });
+    before.insertAdjacentElement("beforebegin", nav);
+  }
+
+  function render(){ renderWho(); renderPanels(); }
+
+  window.MirimScore = {
+    init: function(o){
+      cfg = o;
+      var root = document.documentElement.style;
+      root.setProperty("--ms-accent", o.accent || "#5d4dbe");
+      root.setProperty("--ms-deep", o.deep || "#4a3c9e");
+      render();
+      renderNav();
+      window.addEventListener("message", function(e){
+        if (!e.data) return;
+        if (e.data.mirimScore) render();
+        if (e.data.mirimOpen){ var c = document.querySelector('.quiz-card[data-quiz="' + e.data.mirimOpen + '"]'); if (c) c.click(); }
+      });
+      window.addEventListener("storage", function(){ if (!editing) render(); });
+      var bb = document.getElementById("backBtn");
+      if (bb) bb.addEventListener("click", render);
+      // 학번을 넣기 전에는 퀴즈를 시작하지 않아요
+      if (o.guard){
+        document.addEventListener("click", function(e){
+          if (!e.target.closest(o.guard) || student()) return;
+          e.preventDefault(); e.stopImmediatePropagation();
+          renderWho();
+          var err = document.querySelector(".ms-who .ms-err");
+          if (err) err.textContent = "먼저 학년, 반, 번호, 이름을 입력하자.";
+          focusWho();
+        }, true);
+      }
+    },
+    onResult: function(){ MSG = {}; renderPanels(); countdown(); },
+    openGate: openGate
+  };
+})();
+MirimScore.init({"areas": ["it", "html", "python"], "accent": "#6e5dd7", "deep": "#5d4dbe", "whoAfter": "header.top", "panelAfter": ".list", "compact": true});
+</script>
+</body>
+</html>

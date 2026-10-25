@@ -234,15 +234,72 @@ a.crumb:hover{border-color:var(--hover)}
 footer a.back{font-weight:700;color:var(--fg);text-decoration:none}
 footer a.back:hover,footer a.credit:hover{text-decoration:underline;text-underline-offset:3px}
 footer a.credit{font-weight:700;color:var(--fg);text-decoration:none}
+
+/* ===== HTML 퀴즈와 같은 모양 (배경, 머리글, 카드, 버튼, 보기) ===== */
+:root{
+  --fg:#33303c; --sub:#686472; --good:#397256; --lav:#bfb4e4;
+  --accent:#437fba; --accent-sh:#3f6085; --accent-soft:#e4edf7; --accent-ink:#2c4a6b;
+  --tok:#c2701c;
+}
+body{background-color:#eff4fa;background-image:linear-gradient(160deg,#eff4fa 0%,#eaeff8 50%,#e9f3f8 100%);background-size:100% 100%;background-attachment:fixed;padding-block:28px 48px}
+.wrap{gap:18px}
+header.top{display:flex;align-items:center;gap:14px;padding:0 4px}
+.mascot{flex:none;font-size:2.3rem;width:62px;height:62px;border-radius:20px;background:#ffffff;display:grid;place-items:center;border:2.2px solid #bcb7c4;animation:bob 2.6s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-6px) rotate(3deg)}}
+header .pre{display:inline-block;font-size:min(.85rem,3.4vw);font-weight:700;color:#33303c;margin-bottom:6px;white-space:nowrap}
+header h1{margin:0;font-weight:800;font-size:clamp(1.3rem,5.4vw,1.7rem);line-height:1.25;text-wrap:balance}
+header p{margin:4px 0 0;font-size:.95rem;color:var(--sub)}
+.box,.big{background:#ffffff;border:none;border-radius:28px;padding:28px;box-shadow:0 8px 0 #c9c2d5,0 20px 40px rgba(105,92,121,.12)}
+@media (max-width:560px){.box,.big{padding:20px;border-radius:24px}}
+.hud{font-weight:700;color:var(--sub)}
+.hud #hudStage{color:#33303c;font-size:1.35rem;font-weight:800}
+.strip{flex-wrap:nowrap;gap:6px;margin:12px 0 16px}
+.strip span{flex:1;width:auto;height:10px;border-radius:999px;background:#f2eef7;font-size:0;color:transparent;box-shadow:none}
+.strip span.done{background:var(--good)}
+.strip span.now{background:var(--lav);box-shadow:none}
+.badge{background:#ecf3f9;color:#415e75;font-size:.85rem;padding:3px 12px}
+.sit{background:#f7f2e6;border:none;border-radius:16px;padding:10px 14px}
+.sit b{color:#415e75}
+.know{background:#f9fbfc;border:2px solid #ddd7e6;border-radius:16px;padding:10px 14px}
+.know h4{color:#415e75;font-size:.9rem}
+.hint{background:#faf7ef;border:2px solid #ddd7e6;border-radius:16px;padding:10px 14px}
+.hint b{color:#725d28}
+.msg{border-radius:16px;padding:10px 14px}
+.qtitle{font-size:1.25rem;line-height:1.5;margin:12px 0 8px}
+.opt,.symbtn,.chip{background:#fdfcf9;border:2.5px solid #ddd7e6;border-radius:18px;box-shadow:0 4px 0 #c9c2d5;transition:transform .12s,box-shadow .12s,border-color .15s}
+.opt{padding:12px 14px;min-height:56px;align-items:center}
+.opt:hover:not(:disabled),.symbtn:hover:not(:disabled),.chip:hover:not(:disabled){border-color:#b5adc6;transform:translateY(-2px);box-shadow:0 6px 0 #b5adc6}
+.opt .n{width:30px;height:30px;background:#ddd7e6;font-size:.9rem}
+.opt.right,.symbtn.right{background:var(--okbg);transform:none}
+.opt.wrong,.symbtn.wrong{background:var(--badbg);transform:none}
+.opt.right,.opt.wrong,.symbtn.right,.symbtn.wrong{border-color:#ddd7e6;box-shadow:0 4px 0 #c9c2d5}
+.btn{font-size:1.08rem;border-radius:999px;padding:12px 26px;box-shadow:0 5px 0 var(--accent-sh);transition:transform .08s,box-shadow .08s,filter .15s}
+.btn:hover:not(:disabled){filter:brightness(1.04)}
+.btn:active{transform:translateY(3px);box-shadow:0 2px 0 var(--accent-sh)}
+.btn.go{background:#2f9a80;box-shadow:0 5px 0 #23765f}
+.btn.go:active{box-shadow:0 2px 0 #23765f}
+.btn.sub{background:#ffffff;color:var(--fg);border:2px solid #ddd7e6;box-shadow:0 4px 0 #c9c2d5}
+.sbtn{font-family:var(--font);font-weight:700;font-size:.9rem;background:#ffffff;color:var(--fg);border:2px solid #ddd7e6;border-radius:999px;padding:6px 14px;box-shadow:0 3px 0 #c9c2d5}
+.sbtn:active{transform:translateY(2px);box-shadow:0 1px 0 #c9c2d5}
+.mapbox,.fcbox{background:#ffffff;border:2px solid #ddd7e6;border-radius:16px;padding:10px}
+.drow{border-radius:16px}
+.diff{border-top:2px solid #ddd7e6}
+.fc .tok{fill:var(--tok)}
+.tile .tok{background:var(--tok);box-shadow:0 0 0 2px var(--tok)}
+button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--lav);outline-offset:3px}
+@media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
 </style>
 </head>
 <body>
 <div class="wrap">
   <nav class="crumbs topbar" aria-label="현재 위치"><a class="crumb" href="index.html"><span class="lg">메인 페이지</span><span class="sm">메인</span></a><span class="crumb-sep" aria-hidden="true">›</span><span class="crumb cur" aria-current="page"><b><span class="lg">알고리즘 순서도 보드게임</span><span class="sm">알고리즘</span></b></span></nav>
-  <header>
-    <div class="pre">고등학생을 위한</div>
-    <h1>무인 베이커리 알고리즘 보드게임</h1>
-    <p>무인 베이커리 키오스크의 순서도가 보드판입니다. 주황색 말을 따라가며, 순서도 위에서 직접 문제를 풉니다.</p>
+  <header class="top">
+    <div class="mascot" aria-hidden="true">🥐</div>
+    <div>
+      <span class="pre">미림마이스터고 디자인과 재학생을 위한</span>
+      <h1>무인 베이커리 알고리즘 보드게임</h1>
+      <p>키오스크 순서도가 보드판입니다. 주황색 말을 따라가며 순서도 위에서 직접 풀어 보자.</p>
+    </div>
   </header>
 
   <section class="box" aria-label="보드판">

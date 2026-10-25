@@ -99,6 +99,9 @@
   .crumbs .crumb:active{transform:none;box-shadow:none}
   .crumbs a.crumb:hover,.crumbs button.crumb:hover{text-decoration:underline;text-underline-offset:4px;border:0}
   .crumbs{gap:6px 10px}
+  /* 위쪽 메뉴: 바 모양 (퀴즈 안 이동 경로와 같게) */
+  .crumb-bar{display:flex;flex-wrap:nowrap;align-items:center;gap:6px 10px;padding:10px max(16px, calc((100% - 680px) / 2 + 4px));background:rgba(255,255,255,.92);border-bottom:2px solid #ddd7e6;backdrop-filter:blur(6px);min-height:46px}
+  body:has(#menu.hidden) .crumb-bar{display:none}
   .menu-crumbs{margin:0 0 14px}
   .frames{flex:1;position:relative}
   .frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent}
@@ -207,12 +210,12 @@
 </style>
 </head>
 <body>
-<main id="menu">
-  <nav class="crumbs menu-crumbs" aria-label="현재 위치">
+<nav class="crumb-bar crumbs" aria-label="현재 위치">
     <a class="crumb" href="index.html"><span class="lg">메인 페이지</span><span class="sm">메인</span></a>
     <span class="crumb-sep" aria-hidden="true">›</span>
     <span class="crumb cur" aria-current="page"><b><span class="lg">HTML 퀴즈 모음</span><span class="sm">HTML</span></b></span>
   </nav>
+<main id="menu">
   <header class="top">
     <div class="mascot" aria-hidden="true"><svg class="globe" viewBox="0 0 64 64" aria-hidden="true"><defs><clipPath id="gC"><circle cx="32" cy="32" r="27"/></clipPath><clipPath id="gE"><ellipse cx="32" cy="32" rx="11" ry="27"/></clipPath></defs><g clip-path="url(#gC)"><rect x="5" y="5" width="27" height="14" fill="#b3d8f8"/><rect x="32" y="5" width="27" height="14" fill="#5595dc"/><rect x="5" y="19" width="27" height="13" fill="#8fbeed"/><rect x="32" y="19" width="27" height="13" fill="#427ec8"/><rect x="5" y="32" width="27" height="13" fill="#6ba5e3"/><rect x="32" y="32" width="27" height="13" fill="#3368b1"/><rect x="5" y="45" width="27" height="14" fill="#4b8cd6"/><rect x="32" y="45" width="27" height="14" fill="#24529a"/></g><g clip-path="url(#gE)"><rect x="21" y="5" width="11" height="14" fill="#94c2ef"/><rect x="32" y="5" width="11" height="14" fill="#74abe5"/><rect x="21" y="19" width="11" height="13" fill="#70a8e4"/><rect x="32" y="19" width="11" height="13" fill="#5092db"/><rect x="21" y="32" width="11" height="13" fill="#4d8fd9"/><rect x="32" y="32" width="11" height="13" fill="#407bc5"/><rect x="21" y="45" width="11" height="14" fill="#3e78c2"/><rect x="32" y="45" width="11" height="14" fill="#3165ae"/></g><g fill="none" stroke="#ffffff" stroke-width="3"><ellipse cx="32" cy="32" rx="11" ry="27"/><path d="M5 32H59M8.5 19H55.5M8.5 45H55.5M32 5V59"/></g></svg></div>
     <div>

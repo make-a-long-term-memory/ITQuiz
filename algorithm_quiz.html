@@ -240,7 +240,7 @@ footer a.credit{font-weight:700;color:var(--fg);text-decoration:none}
   --accent:#437fba; --accent-sh:#3f6085; --accent-soft:#e4edf7; --accent-ink:#2c4a6b;
   --tok:#c2701c;
 }
-body{background-color:#eff4fa;background-image:linear-gradient(160deg,#eff4fa 0%,#eaeff8 50%,#e9f3f8 100%);background-size:100% 100%;background-attachment:fixed;padding-block:28px 48px}
+body{background-color:#eff4fa;background-image:linear-gradient(160deg,#eff4fa 0%,#eaeff8 50%,#e9f3f8 100%);background-size:100% 100%;background-attachment:fixed;padding-block:76px 48px}
 .wrap{gap:18px}
 header.top{display:flex;align-items:center;gap:14px;padding:0 4px}
 .mascot{flex:none;font-size:2.3rem;width:62px;height:62px;border-radius:20px;background:#ffffff;display:grid;place-items:center;border:2.2px solid #bcb7c4;animation:bob 2.6s ease-in-out infinite}
@@ -313,14 +313,17 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
 .crumbs a.crumb:hover{text-decoration:underline;text-underline-offset:4px;border:0}
 .crumbs .crumb:active{transform:none;box-shadow:none}
 .crumbs{gap:6px 10px}
+  /* 위쪽 메뉴: 바 모양 (퀴즈 안 이동 경로와 같게) */
+.crumb-bar{display:flex;flex-wrap:nowrap;align-items:center;gap:6px 10px;padding:10px max(16px, calc((100% - 680px) / 2 + 4px));background:rgba(255,255,255,.92);border-bottom:2px solid #ddd7e6;backdrop-filter:blur(6px);min-height:46px}
+.crumb-bar{position:absolute;top:0;left:0;right:0;z-index:5}
 /* 알아두기, 기호 사전: 테두리만, 그림자 없이 */
 .big,.box[aria-label="기호 사전"]{box-shadow:none;border:2px solid #ddd7e6}
 @media (max-width:560px){.box,.big{padding:20px 14px}.mapbox{padding:4px}}
 </style>
 </head>
 <body>
+  <nav class="crumb-bar crumbs" aria-label="현재 위치"><a class="crumb" href="index.html"><span class="lg">메인 페이지</span><span class="sm">메인</span></a><span class="crumb-sep" aria-hidden="true">›</span><span class="crumb cur" aria-current="page"><b><span class="lg">알고리즘 순서도 보드게임</span><span class="sm">알고리즘</span></b></span></nav>
 <div class="wrap">
-  <nav class="crumbs topbar" aria-label="현재 위치"><a class="crumb" href="index.html"><span class="lg">메인 페이지</span><span class="sm">메인</span></a><span class="crumb-sep" aria-hidden="true">›</span><span class="crumb cur" aria-current="page"><b><span class="lg">알고리즘 순서도 보드게임</span><span class="sm">알고리즘</span></b></span></nav>
   <header class="top">
     <div class="mascot" aria-hidden="true">🥐</div>
     <div>

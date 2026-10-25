@@ -213,8 +213,15 @@ footer a{color:var(--sub)}
 .dlv.lv2{background:var(--okbg);color:var(--ok)}
 .dlv.lv3{background:var(--chip);color:var(--sub)}
 
-.topbar a{display:inline-block;color:var(--accent-ink);font-weight:700;text-decoration:none;font-size:.92rem}
-.topbar a:hover{text-decoration:underline;text-underline-offset:3px}
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+.crumb{display:inline-block;font-weight:700;font-size:.92rem;line-height:1.4;color:var(--fg);background:var(--card);border:2px solid var(--line);border-radius:999px;padding:5px 14px;box-shadow:0 3px 0 var(--shadow);text-decoration:none;cursor:pointer}
+a.crumb:hover{border-color:var(--hover)}
+.crumb:active{transform:translateY(2px);box-shadow:0 1px 0 var(--shadow)}
+.crumb-sep{color:var(--sub);font-weight:800}
+.crumb.cur{display:inline-flex;align-items:center;gap:8px;cursor:default;box-shadow:none;background:var(--accent-soft);border-color:var(--accent);color:var(--accent-ink)}
+.crumb.cur:active{transform:none}
+.crumb.cur small{font-size:.72rem;font-weight:800;color:#fff;background:var(--accent);border-radius:999px;padding:1px 8px;line-height:1.5}
+.crumb.cur b{font-weight:800}
 footer a.back{font-weight:700;color:var(--fg);text-decoration:none}
 footer a.back:hover,footer a.credit:hover{text-decoration:underline;text-underline-offset:3px}
 footer a.credit{font-weight:700;color:var(--fg);text-decoration:none}
@@ -222,7 +229,7 @@ footer a.credit{font-weight:700;color:var(--fg);text-decoration:none}
 </head>
 <body>
 <div class="wrap">
-  <div class="topbar"><a href="index.html">← 메인 페이지로 이동</a></div>
+  <nav class="crumbs topbar" aria-label="현재 위치"><a class="crumb" href="index.html">메인 페이지</a><span class="crumb-sep" aria-hidden="true">›</span><span class="crumb cur" aria-current="page"><small>현위치</small><b>알고리즘 순서도 보드게임</b></span></nav>
   <header>
     <div class="pre">고등학생을 위한</div>
     <h1>무인 베이커리 알고리즘 보드게임</h1>

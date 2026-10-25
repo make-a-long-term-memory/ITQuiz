@@ -61,6 +61,11 @@
     .crumb{padding:5px 12px;font-size:1rem}
     .crumb.cur{padding:0 2px;font-size:1rem}
   }
+  /* 이동 경로: 버튼 모양 없이 글자만 (알고리즘 퀴즈와 같은 모양) */
+  .crumbs .crumb,.crumbs .crumb.cur{background:none;border:0;border-radius:0;box-shadow:none;padding:0;font-size:1rem}
+  .crumbs .crumb:active{transform:none;box-shadow:none}
+  .crumbs a.crumb:hover,.crumbs button.crumb:hover{text-decoration:underline;text-underline-offset:4px;border:0}
+  .crumbs{gap:6px 10px}
   .menu-crumbs{margin:0 0 14px}
   .crumbs{margin:0 0 12px;padding:0 4px}
   .top{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding:0 4px}

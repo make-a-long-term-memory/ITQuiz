@@ -94,6 +94,11 @@
     .crumb{padding:5px 12px;font-size:1rem}
     .crumb.cur{padding:0 2px;font-size:1rem}
   }
+  /* 이동 경로: 버튼 모양 없이 글자만 (알고리즘 퀴즈와 같은 모양) */
+  .crumbs .crumb,.crumbs .crumb.cur{background:none;border:0;border-radius:0;box-shadow:none;padding:0;font-size:1rem}
+  .crumbs .crumb:active{transform:none;box-shadow:none}
+  .crumbs a.crumb:hover,.crumbs button.crumb:hover{text-decoration:underline;text-underline-offset:4px;border:0}
+  .crumbs{gap:6px 10px}
   .menu-crumbs{margin:0 0 14px}
   .frames{flex:1;position:relative}
   .frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent}
@@ -216,7 +221,7 @@
       <p>처음 배우는 사람을 위한 3단계 퀴즈</p>
     </div>
   </header>
-  <div class="guide">HTML이 처음이라면 <b>워밍업 OX 퀴즈</b>로 시작해서 <b>1단계부터 차례대로</b> 풀어 보자. 모든 문제에 힌트가 함께 보입니다. 퀴즈를 풀다가 위쪽 <b><span class="lg">HTML 퀴즈 모음</span><span class="sm">HTML</span></b>을 눌러도 푼 내용은 그대로 남아 있습니다.</div>
+  <div class="guide">HTML이 처음이라면 <b>워밍업 OX 퀴즈</b>로 시작해서 <b>1단계부터 차례대로</b> 풀어 보자. 모든 문제에 힌트가 함께 보입니다. 퀴즈를 풀다가 위쪽 <b>HTML 퀴즈 모음</b>을 눌러도 푼 내용은 그대로 남아 있습니다.</div>
   <div class="list">
     <button class="quiz-card" data-quiz="ox" data-title="워밍업, HTML OX 퀴즈" type="button">
       <span class="qc-icon" style="background:#ecf3f9">⭕</span>

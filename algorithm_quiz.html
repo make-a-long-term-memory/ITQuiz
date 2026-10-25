@@ -319,6 +319,13 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
 /* 알아두기, 기호 사전: 테두리만, 그림자 없이 */
 .big,.box[aria-label="기호 사전"]{box-shadow:none;border:2px solid #ddd7e6}
 @media (max-width:560px){.box,.big{padding:20px 14px}.mapbox{padding:4px}}
+
+/* 힌트: 위쪽(문제 아래)으로 옮기고, 동그라미 안에 ? 표시 */
+.hints{margin:12px 0 4px;gap:4px}
+.hints .ht{display:flex;align-items:center;gap:8px;margin-bottom:2px}
+.hints .ht b{color:#6a5320;font-size:1rem}
+.qmark{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:2px solid #6a5320;color:#6a5320;font-weight:800;font-size:.8rem;line-height:1}
+.hints .hint .hn{font-weight:700;color:#6a5320;margin-right:2px}
 </style>
 </head>
 <body>
@@ -338,6 +345,7 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
       <span><b id="hudStage">1</b> / <span id="hudAll">11</span> 단계</span>
     </div>
     <div id="prompt"></div>
+    <div id="hintBox"></div>
     <div class="mapbar"><span class="cap" id="mapCap"></span><button class="sbtn" id="mapToggle" type="button">전체 보기</button></div>
     <div class="mapbox"><div id="map"></div></div>
     <div id="tray"></div>
@@ -978,8 +986,8 @@ function startQuestion() {
   const st = STAGES[G.stage];
   G.q = st.qs[G.qi]; G.si = 0; G.log = []; G.ynDone = []; G.tokenAt = G.q.from; G.full = false;
   $('card').hidden = false;
+  $('hintBox').innerHTML = `<div class="hints"><div class="ht"><span class="qmark" aria-hidden="true">?</span><b>힌트</b></div>` + G.q.hints.map((t, i) => `<p class="hint"><span class="hn">${i + 1}.</span> ${esc(t)}</p>`).join('') + `</div>`;
   $('card').innerHTML = `<div class="know"><h4>${esc(st.know[0])}</h4><p>${esc(st.know[1])}</p></div>`
-    + `<div class="hints">` + G.q.hints.map((t, i) => `<p class="hint"><b>힌트 ${i + 1}</b> ${esc(t)}</p>`).join('') + `</div>`
     + `<div class="diff">난이도 <span class="stars">${starsOf(st.diff)}</span></div>`;
   renderStrip();
   startStep();
@@ -1169,7 +1177,7 @@ function renderFinal() {
   G.q = { chart: 'main', view: [0, 0, MAIN.w, MAIN.h] }; G.full = true; G.ex = {}; G.tokenAt = 'end'; G.ynDone = [];
   renderStrip();
   $('hudStage').textContent = STAGES.length;
-  $('card').hidden = true; $('tray').innerHTML = ''; $('fb').innerHTML = ''; $('nx').innerHTML = '';
+  $('card').hidden = true; $('hintBox').innerHTML = ''; $('tray').innerHTML = ''; $('fb').innerHTML = ''; $('nx').innerHTML = '';
   $('mapToggle').hidden = true;
   $('prompt').innerHTML = `<div class="finalbox">
     <span class="badge">게임 클리어</span>

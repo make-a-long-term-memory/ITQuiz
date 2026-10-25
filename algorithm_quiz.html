@@ -120,11 +120,11 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
 
 /* 순서도 */
 .fc{width:100%;height:auto;display:block;max-width:100%}
-.fc text{font-family:var(--font);font-size:13px;fill:var(--fg)}
+.fc text{font-family:var(--font);font-size:18px;fill:var(--fg)}
 .fc .sh{fill:var(--card);stroke:var(--accent);stroke-width:2.2}
 .fc .sh.term{fill:var(--accent-soft)}
 .fc .ln{stroke:var(--sub);stroke-width:2;fill:none}
-.fc .lb{font-size:12px;fill:var(--accent-ink);font-weight:700}
+.fc .lb{font-size:17px;fill:var(--accent-ink);font-weight:700}
 .fc .blank .sh{fill:var(--chip);stroke:var(--bad);stroke-width:2.2}
 .fc .blank text{fill:var(--bad);font-weight:700}
 .fc .hit .sh{fill:var(--accent-soft)}
@@ -180,7 +180,7 @@ footer a{color:var(--sub)}
 .fc .focus .sh{fill:var(--accent-soft);stroke:var(--accent-ink);stroke-width:3.4}
 .fc .ynbtn{cursor:pointer}
 .fc .ynbtn rect{fill:var(--card);stroke:var(--accent);stroke-width:2.4}
-.fc .ynbtn text{fill:var(--accent-ink);font-weight:700;font-size:13px}
+.fc .ynbtn text{fill:var(--accent-ink);font-weight:700;font-size:17px}
 .fc .ynbtn:hover rect,.fc .ynbtn:focus rect{fill:var(--accent-soft)}
 .fc .ynbtn.wrong rect{fill:var(--badbg);stroke:var(--bad)}
 .fc .pickable{cursor:pointer}
@@ -189,7 +189,7 @@ footer a{color:var(--sub)}
 .fc .pickable.wrong .sh{fill:var(--badbg);stroke:var(--bad)}
 .fc .pickable.right .sh{fill:var(--okbg);stroke:var(--ok)}
 .fc .pbadge circle{fill:var(--accent);stroke:var(--card);stroke-width:2}
-.fc .pbadge text{fill:#fff;font-weight:700;font-size:12px}
+.fc .pbadge text{fill:#fff;font-weight:700;font-size:14px}
 .fc g:focus-visible{outline:3px solid var(--accent)}
 #map.full .fc{max-height:none;max-width:440px;margin:0 auto}
 .finalbox h2{margin:6px 0;font-size:1.5rem}
@@ -326,7 +326,6 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
     <div class="hud">
       <span><b id="hudStage">1</b> / <span id="hudAll">11</span> 단계</span>
     </div>
-    <div class="strip" id="strip" aria-hidden="true"></div>
     <div id="prompt"></div>
     <div class="mapbar"><span class="cap" id="mapCap"></span><button class="sbtn" id="mapToggle" type="button">전체 보기</button></div>
     <div class="mapbox"><div id="map"></div></div>
@@ -929,7 +928,6 @@ function newGame() {
 }
 
 function renderStrip() {
-  $('strip').innerHTML = STAGES.map((s, i) => `<span class="${i < G.stage ? 'done' : (i === G.stage ? 'now' : '')}">${i < G.stage ? '✔' : LET[i]}</span>`).join('');
   $('hudStage').textContent = G.stage + 1;
 }
 
@@ -974,7 +972,7 @@ function stepQuestion(S) {
 function startStep() {
   const st = STAGES[G.stage], q = G.q, S = q.steps[G.si];
   G.cur = S; G.first = true; G.solved = false;
-  let h = `<div class="qhead"><span class="badge">${LET[G.stage]}. ${esc(st.name)}</span><span style="color:var(--sub);font-size:.9rem">문제 ${G.qi + 1} / ${st.qs.length}, 질문 ${G.si + 1} / ${q.steps.length}</span></div>`;
+  let h = `<div class="qhead"><span class="badge">${LET[G.stage]}. ${esc(st.name)}</span></div>`;
   h += `<div class="sit"><b>상황</b> ${esc(q.sit)}</div>`;
   if (G.log.length) h += `<div class="done-steps">${G.log.map(t => `<span>✔ ${esc(t)}</span>`).join('')}</div>`;
   h += `<div class="step"><h3>${esc(stepQuestion(S))}</h3></div>`;

@@ -325,7 +325,6 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
   <section class="box" aria-label="보드판">
     <div class="hud">
       <span><b id="hudStage">1</b> / <span id="hudAll">11</span> 단계</span>
-      <span>한 번에 맞힌 질문 <b id="hudScore">0</b> / <b id="hudTotal">0</b></span>
     </div>
     <div class="strip" id="strip" aria-hidden="true"></div>
     <div id="prompt"></div>
@@ -924,7 +923,6 @@ function shuffle(a) {
 
 function newGame() {
   G = { stage: 0, qi: 0, si: 0, score: 0, perfect: STAGES.map(() => true), done: false, revealed: new Set(), full: false, log: [], ynDone: [], first: true, solved: false, tokenAt: null, ex: {}, cur: null, q: null };
-  $('hudTotal').textContent = TOTAL;
   $('hudAll').textContent = STAGES.length;
   $('mapToggle').hidden = false;
   startQuestion();
@@ -933,7 +931,6 @@ function newGame() {
 function renderStrip() {
   $('strip').innerHTML = STAGES.map((s, i) => `<span class="${i < G.stage ? 'done' : (i === G.stage ? 'now' : '')}">${i < G.stage ? '✔' : LET[i]}</span>`).join('');
   $('hudStage').textContent = G.stage + 1;
-  $('hudScore').textContent = G.score;
 }
 
 function renderMap() {
@@ -1022,7 +1019,6 @@ function stepLog(S) {
 function solvedStep(S) {
   G.solved = true;
   if (G.first) G.score++; else G.perfect[G.stage] = false;
-  $('hudScore').textContent = G.score;
   G.log.push(stepLog(S));
   fb(true, '정답이에요!', S.e);
   const last = G.si === G.q.steps.length - 1;

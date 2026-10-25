@@ -303,6 +303,11 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
 .fc .pickable:hover .sh{fill:#ffffff}
 .fc .ynbtn rect{fill:#ffffff}
 .fc .ynbtn:hover rect,.fc .ynbtn:focus rect{fill:var(--fc-fill2)}
+
+/* 힌트 1, 2를 한 상자로 */
+.hints{background:#f6eed6;border:2px solid #e4d9b8;border-radius:16px;padding:10px 14px;margin:8px 0;display:flex;flex-direction:column;gap:6px}
+.hints .hint{background:none;border:0;border-radius:0;padding:0;margin:0}
+.hints .hint b{color:#6a5320}
 </style>
 </head>
 <body>
@@ -956,7 +961,7 @@ function startQuestion() {
   G.q = st.qs[G.qi]; G.si = 0; G.log = []; G.ynDone = []; G.tokenAt = G.q.from; G.full = false;
   $('card').hidden = false;
   $('card').innerHTML = `<div class="know"><h4>${esc(st.know[0])}</h4><p>${esc(st.know[1])}</p></div>`
-    + G.q.hints.map((t, i) => `<div class="hint"><b>힌트 ${i + 1}</b> ${esc(t)}</div>`).join('')
+    + `<div class="hints">` + G.q.hints.map((t, i) => `<p class="hint"><b>힌트 ${i + 1}</b> ${esc(t)}</p>`).join('') + `</div>`
     + `<div class="diff">난이도 <span class="stars">${starsOf(st.diff)}</span></div>`;
   renderStrip();
   startStep();

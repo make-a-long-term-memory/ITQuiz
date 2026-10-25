@@ -51,7 +51,7 @@
   .quiz-card:focus-visible{outline:3px solid #bfb4e4;outline-offset:3px}
   .qc-icon{flex:none;width:58px;height:58px;border-radius:18px;display:grid;place-items:center;font-size:1.9rem}
   .qc-body{flex:1;min-width:0}
-  .qc-step{font-size:.8rem;font-weight:700;color:var(--ink-soft)}
+  .qc-step{font-size:1.08rem;font-weight:800;color:#bd426e}
   .qc-title{font-size:1.2rem;font-weight:800;line-height:1.35}
   .qc-desc{font-size:.92rem;color:var(--ink-soft)}
   .qc-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
@@ -81,10 +81,12 @@
   a.crumb:hover,button.crumb:hover{border-color:#b5adc6}
   .crumb:active{transform:translateY(2px);box-shadow:0 1px 0 #c9c2d5}
   .crumb-sep{color:var(--ink-soft);font-weight:800}
-  .crumb.cur{display:inline-flex;align-items:center;gap:8px;cursor:default;box-shadow:none;background:#fbeaf0;border-color:#d6557d;color:#9b2f57}
+  .crumb.cur{display:inline-flex;align-items:baseline;gap:10px;cursor:default;box-shadow:none;background:none;border:0;border-radius:0;padding:0 2px;font-size:1.2rem;color:#9b2f57}
   .crumb.cur:active{transform:none}
-  .crumb.cur small{font-size:.72rem;font-weight:800;color:#ffffff;background:#d6557d;border-radius:999px;padding:1px 8px;line-height:1.5}
-  .crumb.cur b{font-weight:800}
+  .crumb.cur small{font-size:.82rem;font-weight:800;color:#d6557d;background:none;padding:0}
+  .crumb.cur b{font-weight:800;font-size:1.2rem}
+  .crumb.cur .stp{font-size:1.4rem;font-weight:800;color:#d6557d}
+  .crumb-sep{font-size:1.2rem}
   .menu-crumbs{margin:0 0 14px}
   .frames{flex:1;position:relative}
   .frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent}
@@ -145,7 +147,7 @@
   .ms-ic{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:1.45rem}
   .ms-ic .globe{width:1em;height:1em;display:block}
   .ms-cb{flex:1;min-width:0;display:grid;gap:1px}
-  .ms-cb small{font-size:.75rem;font-weight:700;color:#686472}
+  .ms-cb small{font-size:.92rem;font-weight:800;color:#bd426e}
   .ms-cb b{font-size:1rem;font-weight:800;line-height:1.3}
   .ms-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
   .ms-tags>span{font-size:.72rem;font-weight:700;border-radius:999px;padding:1px 8px;background:#f6f4fa;color:#5a4f7e}
@@ -502,7 +504,7 @@
   .ms-ic{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:1.45rem}
   .ms-ic .globe{width:1em;height:1em;display:block}
   .ms-cb{flex:1;min-width:0;display:grid;gap:1px}
-  .ms-cb small{font-size:.75rem;font-weight:700;color:#686472}
+  .ms-cb small{font-size:.92rem;font-weight:800;color:#bd426e}
   .ms-cb b{font-size:1rem;font-weight:800;line-height:1.3}
   .ms-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
   .ms-tags>span{font-size:.72rem;font-weight:700;border-radius:999px;padding:1px 8px;background:#f6f4fa;color:#5a4f7e}
@@ -1425,7 +1427,7 @@ MirimScore.init({"areas": ["python"], "panelBefore": "#result .result-actions", 
   .ms-ic{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:1.45rem}
   .ms-ic .globe{width:1em;height:1em;display:block}
   .ms-cb{flex:1;min-width:0;display:grid;gap:1px}
-  .ms-cb small{font-size:.75rem;font-weight:700;color:#686472}
+  .ms-cb small{font-size:.92rem;font-weight:800;color:#bd426e}
   .ms-cb b{font-size:1rem;font-weight:800;line-height:1.3}
   .ms-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
   .ms-tags>span{font-size:.72rem;font-weight:700;border-radius:999px;padding:1px 8px;background:#f6f4fa;color:#5a4f7e}
@@ -2374,7 +2376,7 @@ MirimScore.init({"areas": ["python"], "panelBefore": "#result .result-actions", 
   .ms-ic{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:1.45rem}
   .ms-ic .globe{width:1em;height:1em;display:block}
   .ms-cb{flex:1;min-width:0;display:grid;gap:1px}
-  .ms-cb small{font-size:.75rem;font-weight:700;color:#686472}
+  .ms-cb small{font-size:.92rem;font-weight:800;color:#bd426e}
   .ms-cb b{font-size:1rem;font-weight:800;line-height:1.3}
   .ms-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
   .ms-tags>span{font-size:.72rem;font-weight:700;border-radius:999px;padding:1px 8px;background:#f6f4fa;color:#5a4f7e}
@@ -3455,7 +3457,7 @@ MirimScore.init({"areas": ["python"], "panelBefore": "#result .result-actions", 
   .ms-ic{flex:none;width:44px;height:44px;border-radius:14px;display:grid;place-items:center;font-size:1.45rem}
   .ms-ic .globe{width:1em;height:1em;display:block}
   .ms-cb{flex:1;min-width:0;display:grid;gap:1px}
-  .ms-cb small{font-size:.75rem;font-weight:700;color:#686472}
+  .ms-cb small{font-size:.92rem;font-weight:800;color:#bd426e}
   .ms-cb b{font-size:1rem;font-weight:800;line-height:1.3}
   .ms-tags{display:flex;flex-wrap:wrap;gap:4px;margin-top:3px}
   .ms-tags>span{font-size:.72rem;font-weight:700;border-radius:999px;padding:1px 8px;background:#f6f4fa;color:#5a4f7e}
@@ -4612,7 +4614,10 @@ function openQuiz(key, title){
   Object.entries(frames).forEach(([k, f]) => f.classList.toggle("hidden", k !== key));
   const stepEl = document.querySelector('.quiz-card[data-quiz="' + key + '"] .qc-step');
   const bt = document.getElementById("barTitle");
-  bt.textContent = stepEl ? stepEl.textContent : title;
+  const txt = stepEl ? stepEl.textContent : title, ci = txt.indexOf(",");
+  bt.textContent = "";
+  if (ci > 0){ const sp = document.createElement("span"); sp.className = "stp"; sp.textContent = txt.slice(0, ci); bt.appendChild(sp); bt.appendChild(document.createTextNode(txt.slice(ci))); }
+  else bt.textContent = txt;
   bt.parentNode.title = title;
   document.getElementById("menu").classList.add("hidden");
   document.getElementById("player").classList.remove("hidden");

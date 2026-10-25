@@ -119,12 +119,12 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
 .numin{font:inherit;font-size:1.1rem;width:120px;border:2.5px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--card);color:var(--fg)}
 
 /* 순서도 */
-.fc{width:100%;height:auto;display:block;max-width:100%}
-.fc text{font-family:var(--font);font-size:18px;fill:var(--fg)}
+.fc{width:100%;height:auto;display:block;max-width:100%;margin:0 auto}
+.fc text{font-family:var(--font);font-size:20px;fill:var(--fg)}
 .fc .sh{fill:var(--card);stroke:var(--accent);stroke-width:2.2}
 .fc .sh.term{fill:var(--accent-soft)}
 .fc .ln{stroke:var(--sub);stroke-width:2;fill:none}
-.fc .lb{font-size:17px;fill:var(--accent-ink);font-weight:700}
+.fc .lb{font-size:18px;fill:var(--accent-ink);font-weight:700}
 .fc .blank .sh{fill:var(--chip);stroke:var(--bad);stroke-width:2.2}
 .fc .blank text{fill:var(--bad);font-weight:700}
 .fc .hit .sh{fill:var(--accent-soft)}
@@ -155,7 +155,6 @@ footer a{color:var(--sub)}
 .sbtn{font:inherit;font-size:.85rem;color:var(--fg);background:var(--card);border:2px solid var(--line);border-radius:10px;padding:5px 10px;cursor:pointer}
 .sbtn:hover{border-color:var(--hover)}
 .mapbox{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:8px;margin-top:8px;overflow:hidden}
-.mapbox .fc{max-height:340px}
 .fc .tok{fill:var(--accent);stroke:var(--card);stroke-width:3;transition:transform .7s ease}
 .fc .neutral .sh{fill:var(--chip);stroke:var(--sub)}
 .sit{background:var(--chip);border:2px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0}
@@ -180,7 +179,7 @@ footer a{color:var(--sub)}
 .fc .focus .sh{fill:var(--accent-soft);stroke:var(--accent-ink);stroke-width:3.4}
 .fc .ynbtn{cursor:pointer}
 .fc .ynbtn rect{fill:var(--card);stroke:var(--accent);stroke-width:2.4}
-.fc .ynbtn text{fill:var(--accent-ink);font-weight:700;font-size:17px}
+.fc .ynbtn text{fill:var(--accent-ink);font-weight:700;font-size:18px}
 .fc .ynbtn:hover rect,.fc .ynbtn:focus rect{fill:var(--accent-soft)}
 .fc .ynbtn.wrong rect{fill:var(--badbg);stroke:var(--bad)}
 .fc .pickable{cursor:pointer}
@@ -191,7 +190,7 @@ footer a{color:var(--sub)}
 .fc .pbadge circle{fill:var(--accent);stroke:var(--card);stroke-width:2}
 .fc .pbadge text{fill:#fff;font-weight:700;font-size:14px}
 .fc g:focus-visible{outline:3px solid var(--accent)}
-#map.full .fc{max-height:none;max-width:440px;margin:0 auto}
+#map.full .fc{margin:0 auto}
 .finalbox h2{margin:6px 0;font-size:1.5rem}
 
 
@@ -308,6 +307,15 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
 .hints{background:#f6eed6;border:2px solid #e4d9b8;border-radius:16px;padding:10px 14px;margin:8px 0;display:flex;flex-direction:column;gap:6px}
 .hints .hint{background:none;border:0;border-radius:0;padding:0;margin:0}
 .hints .hint b{color:#6a5320}
+
+/* 이동 경로: 버튼 모양 없이 글자만 */
+.crumbs .crumb{background:none;border:0;border-radius:0;box-shadow:none;padding:0;font-size:1rem}
+.crumbs a.crumb:hover{text-decoration:underline;text-underline-offset:4px;border:0}
+.crumbs .crumb:active{transform:none;box-shadow:none}
+.crumbs{gap:6px 10px}
+/* 알아두기, 기호 사전: 테두리만, 그림자 없이 */
+.big,.box[aria-label="기호 사전"]{box-shadow:none;border:2px solid #ddd7e6}
+@media (max-width:560px){.box,.big{padding:20px 14px}.mapbox{padding:4px}}
 </style>
 </head>
 <body>
@@ -318,7 +326,7 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
     <div>
       <span class="pre">미림마이스터고 디자인과 재학생을 위한</span>
       <h1>무인 베이커리 알고리즘 보드게임</h1>
-      <p>키오스크 순서도가 보드판입니다. 주황색 말을 따라가며 순서도 위에서 직접 풀어 보자.</p>
+      <p>키오스크 순서도가 보드판입니다. 주황색 동그라미(말)를 따라가며 순서도를 보고 직접 풀어 보자.</p>
     </div>
   </header>
 
@@ -397,13 +405,25 @@ function nodePos(spec, id) {
 }
 
 /* o: uid, n(현재 단계 번호), view, revealed(Set), blank, focus[], pick{ids,labels,state}, ynNode, ynState, ynDone[], token */
+// 순서도 안 글자가 화면에서 20px(문제 문장과 같은 크기)로 보이도록, 그림을 1배 크기로 두고 좌우 빈 곳만 잘라요
+function xBounds(spec) {
+  let a = 1e9, b = -1e9;
+  spec.nodes.forEach(n => { a = Math.min(a, n.cx - n.w / 2); b = Math.max(b, n.cx + n.w / 2); });
+  spec.lines.forEach(l => {
+    l.p.forEach(p => { a = Math.min(a, p[0]); b = Math.max(b, p[0]); });
+    if (l.lb) { a = Math.min(a, l.lb[1] - 4); b = Math.max(b, l.lb[1] + l.lb[0].length * 18 + 16); }
+  });
+  return [Math.max(0, a - 12), Math.min(spec.w, b + 12)];
+}
 function drawFlow(spec, o) {
   o = o || {};
   const uid = o.uid || 'f';
-  const view = (o.view || [0, 0, spec.w, spec.h]).join(' ');
+  const xb = xBounds(spec), vw = xb[1] - xb[0];
+  const v0 = o.view || [0, 0, spec.w, spec.h];
+  const view = [xb[0], v0[1], vw, v0[3]].join(' ');
   const arrows = spec.allBlank || o.n == null || o.n >= 2;
   const rev = o.revealed || new Set();
-  let out = `<svg class="fc" viewBox="${view}" role="group" aria-label="${esc(spec.alt)}">`;
+  let out = `<svg class="fc" viewBox="${view}" style="width:${vw}px" role="group" aria-label="${esc(spec.alt)}">`;
   out += `<defs><marker id="${uid}a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10z" style="fill:var(--sub)"/></marker></defs>`;
   spec.lines.forEach(l => {
     const d = 'M' + l.p.map(p => p.join(',')).join(' L');
@@ -426,13 +446,13 @@ function drawFlow(spec, o) {
       badge = `<g class="pbadge"><circle cx="${n.cx + n.w / 2 - 6}" cy="${n.cy - n.h / 2 + 2}" r="11"/><text x="${n.cx + n.w / 2 - 6}" y="${n.cy - n.h / 2 + 6.5}" text-anchor="middle">${o.pick.labels[n.id]}</text></g>`;
     }
     const dy = real ? (n.k === 'doc' ? -4 : (n.k === 'db' ? 5 : 0)) : 0;
-    out += `<g class="nd ${cls}"${attrs}>${shapeSvg(n, real)}<text x="${n.cx}" y="${n.cy + 4.5 + dy}" text-anchor="middle">${esc(n.t)}</text>${badge}</g>`;
+    out += `<g class="nd ${cls}"${attrs}>${shapeSvg(n, real)}<text x="${n.cx}" y="${n.cy + 7 + dy}" text-anchor="middle">${esc(n.t)}</text>${badge}</g>`;
   });
   if (o.ynNode) {
     spec.lines.filter(l => l.of === o.ynNode && l.lb).forEach(l => {
-      const t = l.lb[0], x = l.lb[1], y = l.lb[2], w = t.length * 13 + 18;
+      const t = l.lb[0], x = l.lb[1], y = l.lb[2], w = t.length * 18 + 22;
       const st = (o.ynState && o.ynState[l.yn]) || '';
-      out += `<g class="ynbtn ${st}" data-yn="${l.yn}" tabindex="0" role="button" aria-label="${esc(t)} 길"><rect x="${x - 9}" y="${y - 17}" width="${w}" height="26" rx="13"/><text x="${x}" y="${y}">${esc(t)}</text></g>`;
+      out += `<g class="ynbtn ${st}" data-yn="${l.yn}" tabindex="0" role="button" aria-label="${esc(t)} 길"><rect x="${x - 11}" y="${y - 22}" width="${w}" height="32" rx="16"/><text x="${x}" y="${y}">${esc(t)}</text></g>`;
     });
   }
   if (o.token) {
@@ -444,50 +464,50 @@ function drawFlow(spec, o) {
 
 /* ===== 무인 베이커리 키오스크 순서도 (보드판) ===== */
 const MAIN = {
-  w: 400, h: 792, alt: '무인 베이커리 키오스크 순서도',
+  w: 440, h: 792, alt: '무인 베이커리 키오스크 순서도',
   nodes: [
     { id: 'start', k: 'term', cx: 170, cy: 30, w: 130, h: 36, t: '시작(터치)' },
-    { id: 'pick', k: 'io', cx: 170, cy: 100, w: 150, h: 38, t: '빵 고르기' },
-    { id: 'stock', k: 'dec', cx: 170, cy: 190, w: 160, h: 72, t: '재고 ≥ 수량 ?' },
-    { id: 'sold', k: 'io', cx: 345, cy: 190, w: 96, h: 38, t: '품절 안내' },
-    { id: 'calc', k: 'proc', cx: 170, cy: 282, w: 170, h: 36, t: '합계 = 가격 × 수량' },
-    { id: 'show', k: 'io', cx: 170, cy: 348, w: 150, h: 36, t: '결제 금액 표시' },
-    { id: 'card', k: 'io', cx: 170, cy: 414, w: 150, h: 36, t: '카드 넣기' },
-    { id: 'pay', k: 'dec', cx: 170, cy: 506, w: 160, h: 72, t: '결제 성공 ?' },
-    { id: 'fail', k: 'io', cx: 345, cy: 506, w: 96, h: 36, t: '실패 안내' },
-    { id: 'give', k: 'io', cx: 170, cy: 600, w: 170, h: 38, t: '빵과 영수증 나옴' },
-    { id: 'more', k: 'dec', cx: 170, cy: 690, w: 160, h: 72, t: '더 살까요 ?' },
+    { id: 'pick', k: 'io', cx: 170, cy: 100, w: 172, h: 38, t: '빵 고르기' },
+    { id: 'stock', k: 'dec', cx: 170, cy: 190, w: 180, h: 72, t: '재고 ≥ 수량 ?' },
+    { id: 'sold', k: 'io', cx: 380, cy: 190, w: 110, h: 38, t: '품절 안내' },
+    { id: 'calc', k: 'proc', cx: 170, cy: 282, w: 192, h: 36, t: '합계 = 가격 × 수량' },
+    { id: 'show', k: 'io', cx: 170, cy: 348, w: 172, h: 36, t: '결제 금액 표시' },
+    { id: 'card', k: 'io', cx: 170, cy: 414, w: 172, h: 36, t: '카드 넣기' },
+    { id: 'pay', k: 'dec', cx: 170, cy: 506, w: 180, h: 72, t: '결제 성공 ?' },
+    { id: 'fail', k: 'io', cx: 380, cy: 506, w: 110, h: 36, t: '실패 안내' },
+    { id: 'give', k: 'io', cx: 170, cy: 600, w: 192, h: 38, t: '빵과 영수증 나옴' },
+    { id: 'more', k: 'dec', cx: 170, cy: 690, w: 180, h: 72, t: '더 살까요 ?' },
     { id: 'end', k: 'term', cx: 170, cy: 770, w: 130, h: 36, t: '끝(인사)' }
   ],
   lines: [
     { p: [[170, 48], [170, 81]] },
     { p: [[170, 119], [170, 154]] },
-    { p: [[250, 190], [297, 190]], lb: ['아니오', 250, 178], of: 'stock', yn: 'no' },
-    { p: [[345, 171], [345, 100], [245, 100]] },
+    { p: [[260, 190], [325, 190]], lb: ['아니오', 266, 178], of: 'stock', yn: 'no' },
+    { p: [[380, 171], [380, 100], [256, 100]] },
     { p: [[170, 226], [170, 264]], lb: ['예', 180, 250], of: 'stock', yn: 'yes' },
     { p: [[170, 300], [170, 330]] },
     { p: [[170, 366], [170, 396]] },
     { p: [[170, 432], [170, 470]] },
-    { p: [[250, 506], [297, 506]], lb: ['아니오', 250, 494], of: 'pay', yn: 'no' },
-    { p: [[345, 488], [345, 414], [245, 414]] },
+    { p: [[260, 506], [325, 506]], lb: ['아니오', 266, 494], of: 'pay', yn: 'no' },
+    { p: [[380, 488], [380, 414], [256, 414]] },
     { p: [[170, 542], [170, 581]], lb: ['예', 180, 566], of: 'pay', yn: 'yes' },
     { p: [[170, 619], [170, 654]] },
     { p: [[170, 726], [170, 752]], lb: ['아니오', 180, 744], of: 'more', yn: 'no' },
-    { p: [[90, 690], [22, 690], [22, 100], [95, 100]], lb: ['예', 30, 682], of: 'more', yn: 'yes' }
+    { p: [[80, 690], [22, 690], [22, 100], [84, 100]], lb: ['예', 30, 682], of: 'more', yn: 'yes' }
   ]
 };
 
 /* ===== 9단계: 데이터베이스와 문서 ===== */
 const DOCDB = {
-  w: 400, h: 480, alt: '재고 DB를 읽고 영수증을 출력하는 순서도',
+  w: 440, h: 480, alt: '재고 DB를 읽고 영수증을 출력하는 순서도',
   nodes: [
     { id: 'start', k: 'term', cx: 170, cy: 28, w: 110, h: 34, t: '시작' },
-    { id: 'pick', k: 'io', cx: 170, cy: 90, w: 150, h: 36, t: '빵 고르기' },
-    { id: 'read', k: 'db', cx: 170, cy: 158, w: 140, h: 46, t: '재고 DB 읽기' },
-    { id: 'cond', k: 'dec', cx: 170, cy: 248, w: 170, h: 72, t: '재고 ≥ 수량 ?' },
+    { id: 'pick', k: 'io', cx: 170, cy: 90, w: 172, h: 36, t: '빵 고르기' },
+    { id: 'read', k: 'db', cx: 170, cy: 158, w: 156, h: 46, t: '재고 DB 읽기' },
+    { id: 'cond', k: 'dec', cx: 170, cy: 248, w: 190, h: 72, t: '재고 ≥ 수량 ?' },
     { id: 'upd', k: 'proc', cx: 170, cy: 334, w: 150, h: 34, t: '재고 줄이기' },
     { id: 'rcpt', k: 'doc', cx: 170, cy: 398, w: 150, h: 44, t: '영수증 출력' },
-    { id: 'sold', k: 'io', cx: 345, cy: 248, w: 96, h: 36, t: '품절 안내' },
+    { id: 'sold', k: 'io', cx: 380, cy: 248, w: 110, h: 36, t: '품절 안내' },
     { id: 'end', k: 'term', cx: 170, cy: 452, w: 110, h: 34, t: '끝' }
   ],
   lines: [
@@ -495,26 +515,26 @@ const DOCDB = {
     { p: [[170, 108], [170, 134]] },
     { p: [[170, 182], [170, 212]] },
     { p: [[170, 284], [170, 317]], lb: ['예', 180, 306], of: 'cond', yn: 'yes' },
-    { p: [[255, 248], [297, 248]], lb: ['아니오', 255, 236], of: 'cond', yn: 'no' },
+    { p: [[265, 248], [325, 248]], lb: ['아니오', 271, 236], of: 'cond', yn: 'no' },
     { p: [[170, 351], [170, 376]] },
     { p: [[170, 420], [170, 435]] },
-    { p: [[345, 266], [345, 452], [225, 452]] }
+    { p: [[380, 266], [380, 452], [225, 452]] }
   ]
 };
 
 /* ===== 10단계: 미리 정의된 처리와 연결자 ===== */
 const SUBCONN = {
-  w: 400, h: 520, alt: '카드 결제 승인을 한 칸으로 묶고 연결자로 되돌아가는 순서도',
+  w: 440, h: 520, alt: '카드 결제 승인을 한 칸으로 묶고 연결자로 되돌아가는 순서도',
   nodes: [
     { id: 'start', k: 'term', cx: 170, cy: 28, w: 110, h: 34, t: '시작' },
-    { id: 'pick', k: 'io', cx: 170, cy: 90, w: 150, h: 36, t: '빵 고르기' },
+    { id: 'pick', k: 'io', cx: 170, cy: 90, w: 172, h: 36, t: '빵 고르기' },
     { id: 'cin', k: 'conn', cx: 170, cy: 152, w: 36, h: 36, t: 'A' },
-    { id: 'card', k: 'io', cx: 170, cy: 214, w: 150, h: 36, t: '카드 넣기' },
-    { id: 'auth', k: 'sub', cx: 170, cy: 284, w: 170, h: 40, t: '카드 결제 승인' },
-    { id: 'pay', k: 'dec', cx: 170, cy: 372, w: 160, h: 72, t: '결제 성공 ?' },
-    { id: 'fail', k: 'io', cx: 345, cy: 372, w: 96, h: 36, t: '실패 안내' },
-    { id: 'cout', k: 'conn', cx: 345, cy: 440, w: 36, h: 36, t: 'A' },
-    { id: 'give', k: 'io', cx: 170, cy: 452, w: 150, h: 36, t: '빵 내보내기' },
+    { id: 'card', k: 'io', cx: 170, cy: 214, w: 172, h: 36, t: '카드 넣기' },
+    { id: 'auth', k: 'sub', cx: 170, cy: 284, w: 184, h: 40, t: '카드 결제 승인' },
+    { id: 'pay', k: 'dec', cx: 170, cy: 372, w: 180, h: 72, t: '결제 성공 ?' },
+    { id: 'fail', k: 'io', cx: 380, cy: 372, w: 110, h: 36, t: '실패 안내' },
+    { id: 'cout', k: 'conn', cx: 380, cy: 440, w: 36, h: 36, t: 'A' },
+    { id: 'give', k: 'io', cx: 170, cy: 452, w: 172, h: 36, t: '빵 내보내기' },
     { id: 'end', k: 'term', cx: 170, cy: 504, w: 110, h: 34, t: '끝' }
   ],
   lines: [
@@ -524,8 +544,8 @@ const SUBCONN = {
     { p: [[170, 232], [170, 264]] },
     { p: [[170, 304], [170, 336]] },
     { p: [[170, 408], [170, 434]], lb: ['예', 180, 426], of: 'pay', yn: 'yes' },
-    { p: [[250, 372], [297, 372]], lb: ['아니오', 250, 360], of: 'pay', yn: 'no' },
-    { p: [[345, 390], [345, 422]] },
+    { p: [[260, 372], [325, 372]], lb: ['아니오', 266, 360], of: 'pay', yn: 'no' },
+    { p: [[380, 390], [380, 422]] },
     { p: [[170, 470], [170, 487]] }
   ]
 };
@@ -535,10 +555,10 @@ const BOSS = {
   w: 360, h: 480, allBlank: true, alt: '선물 포장 기능 순서도',
   nodes: [
     { id: 'start', k: 'term', cx: 180, cy: 28, w: 110, h: 34, t: '시작' },
-    { id: 'in', k: 'io', cx: 180, cy: 92, w: 170, h: 36, t: '포장 방법 고르기' },
+    { id: 'in', k: 'io', cx: 180, cy: 92, w: 196, h: 36, t: '포장 방법 고르기' },
     { id: 'cond', k: 'dec', cx: 180, cy: 178, w: 180, h: 72, t: '선물 포장 ?' },
-    { id: 'wrap', k: 'proc', cx: 80, cy: 270, w: 130, h: 36, t: '리본 포장 추가' },
-    { id: 'give', k: 'io', cx: 180, cy: 336, w: 150, h: 36, t: '빵 내보내기' },
+    { id: 'wrap', k: 'proc', cx: 80, cy: 270, w: 152, h: 36, t: '리본 포장 추가' },
+    { id: 'give', k: 'io', cx: 180, cy: 336, w: 172, h: 36, t: '빵 내보내기' },
     { id: 'rcpt', k: 'doc', cx: 180, cy: 398, w: 150, h: 44, t: '영수증 출력' },
     { id: 'end', k: 'term', cx: 180, cy: 458, w: 110, h: 34, t: '끝' }
   ],
@@ -546,8 +566,8 @@ const BOSS = {
     { p: [[180, 45], [180, 74]] },
     { p: [[180, 110], [180, 142]] },
     { p: [[90, 178], [80, 178], [80, 252]], lb: ['예', 38, 168], of: 'cond', yn: 'yes' },
-    { p: [[270, 178], [330, 178], [330, 336], [255, 336]], lb: ['아니오', 276, 168], of: 'cond', yn: 'no' },
-    { p: [[80, 288], [80, 336], [105, 336]] },
+    { p: [[270, 178], [330, 178], [330, 336], [266, 336]], lb: ['아니오', 276, 168], of: 'cond', yn: 'no' },
+    { p: [[80, 288], [80, 336], [98, 336]] },
     { p: [[180, 354], [180, 376]] },
     { p: [[180, 420], [180, 441]] }
   ]
@@ -939,7 +959,7 @@ function renderMap() {
   $('map').innerHTML = drawFlow(sp, o);
   $('map').classList.toggle('full', G.full);
   $('mapToggle').textContent = G.full ? '이 부분만 보기' : '전체 보기';
-  $('mapCap').textContent = G.done ? '완성한 전체 순서도입니다.' : (G.full ? '전체 순서도를 보고 있습니다.' : '주황색 동그라미가 말이에요. 문제는 순서도 위에서 풀자.');
+  $('mapCap').textContent = G.done ? '완성한 전체 순서도입니다.' : (G.full ? '전체 순서도를 보고 있습니다.' : '주황색 동그라미가 지금 위치입니다. 순서도를 보면서 답을 골라 보자.');
 }
 
 function moveToken(id) {

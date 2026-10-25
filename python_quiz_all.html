@@ -63,7 +63,7 @@
 
   #player{position:fixed;inset:0;display:flex;flex-direction:column}
   .bar{
-    flex:none;display:flex;align-items:center;gap:12px;padding:10px 16px;
+    flex:none;display:flex;flex-wrap:wrap;align-items:center;gap:8px 10px;padding:10px 16px;
     background:rgba(255,255,255,.92);border-bottom:2px solid #ddd7e6;backdrop-filter:blur(6px);
   }
   .back{
@@ -71,7 +71,9 @@
     background:#ffffff;color:var(--ink);border:2px solid #ddd7e6;border-radius:999px;padding:6px 14px;box-shadow:0 3px 0 #c9c2d5;
   }
   .back:active{transform:translateY(2px);box-shadow:0 1px 0 #c9c2d5}
-  .bar-title{font-weight:800;font-size:1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .back{line-height:1.4}
+  a.back{display:inline-block;text-decoration:none}
+  .bar-title{flex:1 1 100%;min-width:0;font-weight:800;font-size:1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
   .frames{flex:1;position:relative}
   .frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent}
   @keyframes bob{0%,100%{transform:translateY(0) rotate(-3deg)}50%{transform:translateY(-6px) rotate(3deg)}}
@@ -186,7 +188,7 @@
       <p>처음 배우는 사람을 위한 3단계 퀴즈</p>
     </div>
   </header>
-  <div class="guide">파이썬이 처음이라면 <b>워밍업 OX 퀴즈</b>로 시작해서 <b>1단계부터 차례대로</b> 풀어 보자. 모든 문제에 힌트가 함께 보입니다. 퀴즈를 풀다가 <b>← 첫 페이지로 이동</b>을 눌러도 푼 내용은 그대로 남아 있습니다.</div>
+  <div class="guide">파이썬이 처음이라면 <b>워밍업 OX 퀴즈</b>로 시작해서 <b>1단계부터 차례대로</b> 풀어 보자. 모든 문제에 힌트가 함께 보입니다. 퀴즈를 풀다가 <b>← 파이썬 퀴즈 페이지로 이동</b>을 눌러도 푼 내용은 그대로 남아 있습니다.</div>
   <div class="list">
     <button class="quiz-card" data-quiz="ox" data-title="워밍업, 파이썬 OX 퀴즈" type="button">
       <span class="qc-icon" style="background:#e8f3ee">⭕</span>
@@ -234,7 +236,8 @@
 
 <div id="player" class="hidden">
   <div class="bar">
-    <button class="back" id="backBtn" type="button">← 첫 페이지로 이동</button>
+    <a class="back" href="index.html">← 메인 페이지로 이동</a>
+    <button class="back" id="backBtn" type="button">← 파이썬 퀴즈 페이지로 이동</button>
     <span class="bar-title" id="barTitle"></span>
   </div>
   <div class="frames" id="frames"></div>

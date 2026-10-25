@@ -42,6 +42,9 @@
   .hidden{display:none !important}
   b,strong{font-weight:700}
 
+  .top-nav{margin-bottom:12px;padding:0 4px}
+  .top-nav a{display:inline-block;font-family:inherit;font-size:.95rem;font-weight:800;color:var(--ink);background:#fff;border:2px solid #ddd7e6;border-radius:12px;padding:8px 14px;text-decoration:none;box-shadow:0 3px 0 #c9c2d5;line-height:1.4}
+  .top-nav a:active{transform:translateY(2px);box-shadow:0 1px 0 #c9c2d5}
   .top{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding:0 4px}
   .mascot{flex:none;font-size:2.3rem;width:62px;height:62px;border-radius:20px;background:#ffffff;display:grid;place-items:center;border:2.2px solid #bcb7c4;box-shadow:none;animation:bob 2.6s ease-in-out infinite}
   .eyebrow{display:inline-block;font-size:.85rem;font-weight:700;color:var(--teal-ink);background:none;padding:0;margin-bottom:6px;white-space:nowrap;max-width:100%}
@@ -345,6 +348,7 @@
 </head>
 <body>
 <div class="app">
+  <nav class="top-nav"><a href="index.html">← 메인 페이지로 이동</a></nav>
   <header class="top">
     <div class="mascot" aria-hidden="true">🛰️</div>
     <div>

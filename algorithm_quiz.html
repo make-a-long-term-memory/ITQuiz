@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>무인 베이커리 알고리즘 보드게임</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 64 64%22%3E%3Crect width=%2264%22 height=%2264%22 rx=%2216%22 fill=%22%234b9be0%22/%3E%3Ccircle cx=%2230%22 cy=%2231%22 r=%2215%22 fill=%22none%22 stroke=%22%23fff%22 stroke-width=%227%22/%3E%3Cpath d=%22M31 33l14 13%22 stroke=%22%23fff%22 stroke-width=%227%22 stroke-linecap=%22round%22/%3E%3Cpath d=%22M50 8l2.6 5.4 5.9.8-4.3 4.1 1 5.9-5.2-2.8-5.2 2.8 1-5.9-4.3-4.1 5.9-.8z%22 fill=%22%23ffd257%22/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<style>
+  @font-face{font-family:'KoPubWorld Dotum';font-style:normal;font-weight:400;font-display:swap;ascent-override:88%;descent-override:24%;line-gap-override:0%;
+    src:local('KoPubWorldDotum Medium'),local('KoPubWorldDotumMedium'),local('KoPubWorld돋움체 Medium'),
+        url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Medium.woff2') format('woff2'),url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Medium.woff') format('woff')}
+  @font-face{font-family:'KoPubWorld Dotum';font-style:normal;font-weight:700;font-display:swap;ascent-override:88%;descent-override:24%;line-gap-override:0%;
+    src:local('KoPubWorldDotum Bold'),local('KoPubWorldDotumBold'),local('KoPubWorld돋움체 Bold'),
+        url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Bold.woff2') format('woff2'),url('https://cdn.jsdelivr.net/npm/font-kopubworld@1.0.3/fonts/KoPubWorld-Dotum-Bold.woff') format('woff')}
+
+/* 배치: 위에 9칸 보드, 가운데 문제 카드, 아래에 단계마다 자라나는 순서도(전개도) */
+:root{
+  --bg:#e6ebfb; --bg2:#d8dff8; --bg3:#cdd6f4;
+  --fg:#33313b; --sub:#686571; --card:#ffffff; --chip:#f7f2e6;
+  --line:#ddd7e6; --shadow:#c9c2d5; --hover:#b5adc6;
+  --accent:#c2701c; --accent-sh:#8f520f; --accent-soft:#f6e3cb; --accent-ink:#8a4d0c;
+  --ok:#3d6e56; --okbg:#ebf2ee; --bad:#b25d6c; --badbg:#f9eff1;
+  --code:#2e2e38; --codefg:#eceaf2; --star:#e2b23a;
+  --btn2:#2f9a80; --btn2-sh:#1f6e5b; --num:#ebe3d0; --numfg:#5b5243;
+  --font:'KoPubWorld Dotum','KoPubWorld돋움체','KoPub돋움체','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+  --mono:"Nanum Gothic Coding","D2Coding",ui-monospace,Menlo,Consolas,monospace;
+}
+*{box-sizing:border-box}
+body{
+  background-color:#dbe2f8; background-image:linear-gradient(180deg,var(--bg) 0%,var(--bg2) 55%,var(--bg3) 100%);
+  background-size:100% 100%; background-attachment:fixed; min-height:100vh; letter-spacing:-0.01em; word-break:keep-all; color:var(--fg);
+  font-family:var(--font); font-size:16px; line-height:1.4; text-align:left;
+  padding-block:20px 28px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));
+  padding-right:max(16px,env(safe-area-inset-right,0px));
+}
+.wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:16px;min-width:0}
+header .pre{font-weight:700;color:var(--accent-ink);font-size:min(.95rem,3.6vw)}
+header h1{margin:2px 0 4px;font-size:clamp(1.6rem,6vw,2.1rem);line-height:1.15;text-wrap:balance}
+header p{margin:0;color:var(--sub)}
+.box{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px;min-width:0}
+.big{background:var(--card);border-radius:18px;padding:18px;box-shadow:0 5px 0 var(--shadow);min-width:0}
+
+/* 보드 */
+.hud{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;justify-content:space-between}
+.hud b{font-variant-numeric:tabular-nums}
+.stars{color:var(--star);letter-spacing:1px}
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.tile{
+  position:relative;min-height:84px;border:2.5px solid var(--line);border-radius:12px;background:var(--card);
+  padding:8px 8px 8px 10px;display:flex;flex-direction:column;gap:4px;min-width:0;
+  box-shadow:0 4px 0 var(--shadow);font-size:.84rem;line-height:1.25
+}
+.tile .no{width:26px;height:26px;border-radius:50%;background:var(--num);color:var(--numfg);font-weight:700;display:grid;place-items:center;font-size:.82rem}
+.tile .nm{font-weight:700;overflow-wrap:anywhere}
+.tile.done{background:var(--okbg)}
+.tile.done .no{background:var(--ok);color:#fff}
+.tile.now{border-color:var(--accent);box-shadow:0 4px 0 var(--accent-sh)}
+.tile.lock{opacity:.55}
+.tile .tok{position:absolute;right:6px;top:6px;width:24px;height:24px;border-radius:50%;background:var(--accent);border:3px solid var(--card);box-shadow:0 0 0 2px var(--accent);animation:pop .4s}
+.tile .flag{position:absolute;right:8px;bottom:6px;font-size:.75rem;color:var(--sub)}
+@keyframes pop{from{transform:scale(.3)}to{transform:scale(1)}}
+
+/* 문제 카드 */
+.badge{display:inline-block;background:var(--accent-soft);color:var(--accent-ink);font-weight:700;font-size:.82rem;border-radius:999px;padding:3px 10px}
+.qhead{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between}
+.qtitle{margin:10px 0 6px;font-size:1.18rem;line-height:1.12;font-weight:700;text-wrap:balance}
+.know{background:var(--chip);border:2px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0}
+.know h4{margin:0 0 4px;font-size:.95rem;color:var(--accent-ink)}
+.know p{margin:0}
+.hint{border:2px solid var(--line);border-radius:12px;padding:8px 12px;margin:8px 0;font-size:.95rem;line-height:1.3;background:var(--card)}
+.hint b{color:var(--accent-ink)}
+pre.code{background:var(--code);color:var(--codefg);font-family:var(--mono);font-size:.9rem;line-height:1.45;border-radius:12px;padding:12px;margin:10px 0;overflow-x:auto}
+.opts{display:flex;flex-direction:column;gap:9px;margin-top:12px}
+.opt{
+  display:flex;gap:10px;align-items:flex-start;text-align:left;width:100%;font:inherit;color:inherit;cursor:pointer;
+  background:var(--card);border:2.5px solid var(--line);border-radius:12px;padding:10px 12px;box-shadow:0 4px 0 var(--shadow)
+}
+.opt:hover:not(:disabled){border-color:var(--hover);box-shadow:0 4px 0 var(--hover)}
+.opt .n{flex:none;width:26px;height:26px;border-radius:50%;background:var(--line);display:grid;place-items:center;font-weight:700;font-size:.82rem;color:var(--fg)}
+.opt.right{background:var(--okbg)} .opt.right .n{background:var(--ok);color:#fff}
+.opt.wrong{background:var(--badbg)} .opt.wrong .n{background:var(--bad);color:#fff}
+.opt:disabled{cursor:default}
+button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.msg{border-radius:12px;padding:10px 12px;margin-top:12px;border:2px solid var(--line)}
+.msg.ok{background:var(--okbg);color:var(--ok);border-color:var(--ok)}
+.msg.no{background:var(--badbg);color:var(--bad);border-color:var(--bad)}
+.msg b{display:block;margin-bottom:2px}
+.msg span{color:var(--fg)}
+.btn{font:inherit;font-weight:700;color:#fff;background:var(--accent);border:0;border-radius:12px;padding:11px 20px;cursor:pointer;box-shadow:0 4px 0 var(--accent-sh)}
+.btn.go{background:var(--btn2);box-shadow:0 4px 0 var(--btn2-sh)}
+.btn.sub{background:var(--card);color:var(--fg);border:2.5px solid var(--line);box-shadow:0 4px 0 var(--shadow)}
+.btn:active{transform:translateY(2px);box-shadow:0 2px 0 var(--accent-sh)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.center{display:flex;justify-content:center;margin-top:14px}
+.row{display:flex;flex-wrap:wrap;gap:10px;margin-top:12px}
+.diff{margin-top:14px;padding-top:10px;border-top:2px solid var(--line);color:var(--sub);font-size:.85rem}
+.diff .stars{margin-left:4px}
+
+/* 순서 맞추기, 짝짓기 */
+.pool,.seq{display:flex;flex-direction:column;gap:8px;margin-top:10px}
+.chip{font:inherit;color:inherit;text-align:left;background:var(--card);border:2.5px solid var(--line);border-radius:12px;padding:9px 12px;cursor:pointer;box-shadow:0 3px 0 var(--shadow)}
+.chip:hover:not(:disabled){border-color:var(--hover)}
+.chip.used{opacity:.35}
+.slotrow{display:flex;gap:8px;align-items:center}
+.slotrow .no{flex:none;width:26px;height:26px;border-radius:50%;background:var(--num);color:var(--numfg);font-weight:700;display:grid;place-items:center;font-size:.82rem}
+.slot{flex:1;min-height:42px;border:2px solid var(--line);background:var(--chip);border-radius:12px;padding:9px 12px;font:inherit;color:inherit;text-align:left;cursor:pointer}
+.slot.fill{background:var(--card);border-color:var(--hover)}
+.slot.ok{background:var(--okbg);border-color:var(--ok)}
+.slot.bad{background:var(--badbg);border-color:var(--bad)}
+.pairs{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:8px 12px;margin-top:10px;align-items:center}
+.pairs select{font:inherit;color:inherit;background:var(--card);border:2px solid var(--line);border-radius:10px;padding:8px;width:100%;min-width:0}
+.pairs select.ok{background:var(--okbg);border-color:var(--ok)}
+.pairs select.bad{background:var(--badbg);border-color:var(--bad)}
+.sym{display:flex;gap:10px;align-items:center;min-width:0}
+.sym svg{flex:none;width:64px;height:38px}
+.numin{font:inherit;font-size:1.1rem;width:120px;border:2.5px solid var(--line);border-radius:12px;padding:9px 12px;background:var(--card);color:var(--fg)}
+
+/* 순서도 */
+.fc{width:100%;height:auto;display:block;max-width:100%}
+.fc text{font-family:var(--font);font-size:13px;fill:var(--fg)}
+.fc .sh{fill:var(--card);stroke:var(--accent);stroke-width:2.2}
+.fc .sh.term{fill:var(--accent-soft)}
+.fc .ln{stroke:var(--sub);stroke-width:2;fill:none}
+.fc .lb{font-size:12px;fill:var(--accent-ink);font-weight:700}
+.fc .blank .sh{fill:var(--chip);stroke:var(--bad);stroke-width:2.2}
+.fc .blank text{fill:var(--bad);font-weight:700}
+.fc .hit .sh{fill:var(--accent-soft)}
+.fcbox{overflow-x:auto;background:var(--card);border:2px solid var(--line);border-radius:12px;padding:8px;margin:10px 0}
+.fcbox .fc{min-width:300px}
+.ghost{opacity:.18}
+.chart-title{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:6px}
+.chart-title h3{margin:0;font-size:1.05rem}
+.chart-title span{color:var(--sub);font-size:.9rem}
+.final{text-align:left}
+.final h2{margin:6px 0;font-size:1.5rem}
+footer{color:var(--sub);font-size:.85rem;display:flex;flex-direction:column;gap:4px;padding-top:4px}
+footer a{color:var(--sub)}
+@media (min-width:561px){
+  .tile{min-height:96px;font-size:.92rem}
+  .qtitle{font-size:1.3rem}
+  .big{padding:24px}
+}
+@media (prefers-reduced-motion:reduce){.tile .tok{animation:none}}
+
+
+.strip{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px}
+.strip span{width:28px;height:28px;border-radius:50%;background:var(--num);color:var(--numfg);font-weight:700;font-size:.8rem;display:grid;place-items:center}
+.strip span.done{background:var(--ok);color:#fff}
+.strip span.now{background:var(--accent);color:#fff;box-shadow:0 0 0 3px var(--accent-soft)}
+.mapbar{display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap;margin-top:12px}
+.mapbar .cap{color:var(--sub);font-size:.88rem}
+.sbtn{font:inherit;font-size:.85rem;color:var(--fg);background:var(--card);border:2px solid var(--line);border-radius:10px;padding:5px 10px;cursor:pointer}
+.sbtn:hover{border-color:var(--hover)}
+.mapbox{background:var(--card);border:2px solid var(--line);border-radius:12px;padding:8px;margin-top:8px;overflow:hidden}
+.mapbox .fc{max-height:340px}
+.fc .tok{fill:var(--accent);stroke:var(--card);stroke-width:3;transition:transform .7s ease}
+.fc .neutral .sh{fill:var(--chip);stroke:var(--sub)}
+.sit{background:var(--chip);border:2px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0}
+.sit b{color:var(--accent-ink)}
+.step{margin-top:14px;padding-top:12px;border-top:2px solid var(--line)}
+.step h3{margin:0;font-size:1.05rem;line-height:1.2;text-wrap:balance}
+.stepno{display:inline-block;color:var(--accent-ink);font-weight:700;font-size:.85rem;margin-bottom:2px}
+.done-steps{display:flex;flex-direction:column;gap:3px;color:var(--ok);font-size:.9rem;margin-top:10px}
+.symgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(104px,1fr));gap:9px;margin-top:12px}
+.symbtn{display:flex;flex-direction:column;align-items:center;gap:4px;font:inherit;color:inherit;cursor:pointer;background:var(--card);border:2.5px solid var(--line);border-radius:12px;padding:8px 6px;box-shadow:0 4px 0 var(--shadow)}
+.symbtn:hover:not(:disabled){border-color:var(--hover);box-shadow:0 4px 0 var(--hover)}
+.symbtn svg{width:88px;height:52px;display:block}
+.symbtn.right{background:var(--okbg)}
+.symbtn.wrong{background:var(--badbg)}
+.symbtn:disabled{cursor:default}
+.symbtn:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+.yn{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:12px}
+.yn .opt{justify-content:center;font-weight:700;font-size:1.05rem}
+
+
+.fc .on{stroke:var(--accent);stroke-width:3.4}
+.fc .focus .sh{fill:var(--accent-soft);stroke:var(--accent-ink);stroke-width:3.4}
+.fc .ynbtn{cursor:pointer}
+.fc .ynbtn rect{fill:var(--card);stroke:var(--accent);stroke-width:2.4}
+.fc .ynbtn text{fill:var(--accent-ink);font-weight:700;font-size:13px}
+.fc .ynbtn:hover rect,.fc .ynbtn:focus rect{fill:var(--accent-soft)}
+.fc .ynbtn.wrong rect{fill:var(--badbg);stroke:var(--bad)}
+.fc .pickable{cursor:pointer}
+.fc .pickable .sh{stroke-width:3;fill:var(--accent-soft)}
+.fc .pickable:hover .sh{fill:var(--card)}
+.fc .pickable.wrong .sh{fill:var(--badbg);stroke:var(--bad)}
+.fc .pickable.right .sh{fill:var(--okbg);stroke:var(--ok)}
+.fc .pbadge circle{fill:var(--accent);stroke:var(--card);stroke-width:2}
+.fc .pbadge text{fill:#fff;font-weight:700;font-size:12px}
+.fc g:focus-visible{outline:3px solid var(--accent)}
+#map.full .fc{max-height:none;max-width:440px;margin:0 auto}
+.finalbox h2{margin:6px 0;font-size:1.5rem}
+
+
+.symbtn .ko{font-weight:700;font-size:.9rem;line-height:1.15;text-align:center}
+.symbtn .en{color:var(--sub);font-size:.72rem;line-height:1.15;text-align:center;overflow-wrap:anywhere}
+.fc .sh2{fill:none;stroke:var(--accent);stroke-width:2.2}
+.dict summary{cursor:pointer;font-weight:700;color:var(--accent-ink)}
+.dict summary:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+.dnote{margin:10px 0 0;color:var(--sub);font-size:.88rem}
+.dlist{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:10px;margin-top:12px}
+.drow{display:flex;gap:10px;align-items:flex-start;border:2px solid var(--line);border-radius:12px;padding:8px 10px;background:var(--card);min-width:0}
+.dsym{flex:none;width:68px}
+.dsym svg{width:68px;height:40px;display:block}
+.dtxt{min-width:0;font-size:.92rem;line-height:1.3}
+.den{color:var(--sub);font-size:.82rem;overflow-wrap:anywhere}
+.duse{color:var(--fg);margin-top:2px}
+.dlv{display:inline-block;margin-top:4px;font-size:.76rem;font-weight:700;border-radius:999px;padding:2px 8px}
+.dlv.lv1{background:var(--accent-soft);color:var(--accent-ink)}
+.dlv.lv2{background:var(--okbg);color:var(--ok)}
+.dlv.lv3{background:var(--chip);color:var(--sub)}
+
+.topbar a{display:inline-block;color:var(--accent-ink);font-weight:700;text-decoration:none;font-size:.92rem}
+.topbar a:hover{text-decoration:underline;text-underline-offset:3px}
+footer a.back{font-weight:700;color:var(--fg);text-decoration:none}
+footer a.back:hover,footer a.credit:hover{text-decoration:underline;text-underline-offset:3px}
+footer a.credit{font-weight:700;color:var(--fg);text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="topbar"><a href="index.html">← 첫 페이지로 이동</a></div>
+  <header>
+    <div class="pre">고등학생을 위한</div>
+    <h1>무인 베이커리 알고리즘 보드게임</h1>
+    <p>무인 베이커리 키오스크의 순서도가 보드판입니다. 주황색 말을 따라가며, 순서도 위에서 직접 문제를 풉니다.</p>
+  </header>
+
+  <section class="box" aria-label="보드판">
+    <div class="hud">
+      <span><b id="hudStage">1</b> / <span id="hudAll">11</span> 단계</span>
+      <span>한 번에 맞힌 질문 <b id="hudScore">0</b> / <b id="hudTotal">0</b></span>
+    </div>
+    <div class="strip" id="strip" aria-hidden="true"></div>
+    <div id="prompt"></div>
+    <div class="mapbar"><span class="cap" id="mapCap"></span><button class="sbtn" id="mapToggle" type="button">전체 보기</button></div>
+    <div class="mapbox"><div id="map"></div></div>
+    <div id="tray"></div>
+    <div id="fb"></div>
+    <div class="center" id="nx"></div>
+  </section>
+
+  <section class="big" id="card" aria-label="알아두기와 힌트"></section>
+
+  <section class="box" aria-label="기호 사전">
+    <details class="dict">
+      <summary>기호 사전: 영문 이름과 우리말 이름</summary>
+      <div id="dictBody"></div>
+    </details>
+  </section>
+
+  <footer>
+    <a class="back" href="index.html">← 전체 퀴즈 모음</a>
+    <a class="credit" href="https://www.instagram.com/Make.a.long.term.memory" target="_blank" rel="noopener">by Make a long term memory</a>
+  </footer>
+</div>
+<script>
+/* ===== 순서도 그리기 도구 ===== */
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* 기호를 배우는 단계: 그 단계 전까지는 회색 상자로 보인다 */
+const KIND_STAGE = { term: 1, arrow: 2, io: 3, proc: 4, dec: 5, doc: 9, db: 9, sub: 10, conn: 10 };
+
+/* 기호 사전: 우리말 이름, 영문 이름, 쓰임, 구분 */
+const SYMDEF = {
+  term:    { ko: '단말', en: 'Terminator', mean: '시작과 끝', use: '서비스나 프로그램이 시작하고 끝나는 곳', lv: '기본' },
+  arrow:   { ko: '흐름선', en: 'Flowline (Arrow)', mean: '순서와 방향', use: '다음에 어디로 갈지 알려 주는 선', lv: '기본' },
+  io:      { ko: '입출력', en: 'Input / Output (Data)', mean: '입력과 출력', use: '값을 받거나 결과를 보여 주는 곳', lv: '기본' },
+  proc:    { ko: '처리', en: 'Process', mean: '처리(계산)', use: '계산하거나 값을 바꾸는 일', lv: '기본' },
+  dec:     { ko: '판단', en: 'Decision', mean: '예와 아니오를 묻는 질문', use: '조건에 따라 길을 둘로 나누는 곳', lv: '기본' },
+  doc:     { ko: '문서', en: 'Document', mean: '문서(영수증 같은 것)', use: '영수증, 보고서처럼 문서로 나오는 결과', lv: '실무에서 자주 씀' },
+  db:      { ko: '데이터베이스', en: 'Database (Stored Data)', mean: '자료 저장소', use: '재고, 회원 정보처럼 저장해 두고 읽고 쓰는 자료', lv: '실무에서 자주 씀' },
+  sub:     { ko: '미리 정의된 처리', en: 'Predefined Process (Subroutine)', mean: '따로 만들어 둔 처리를 불러오는 일', use: '복잡한 일을 한 칸으로 묶고 자세한 순서도는 따로 그림', lv: '실무에서 자주 씀' },
+  conn:    { ko: '연결자', en: 'Connector', mean: '떨어진 곳을 이어 주는 일', use: '같은 글자가 적힌 두 원은 이어져 있다는 뜻', lv: '실무에서 자주 씀' },
+  hex:     { ko: '준비', en: 'Preparation', mean: '반복을 준비하는 일', use: '반복 전에 값을 준비하는 칸', lv: '참고' },
+  manual:  { ko: '수동 입력', en: 'Manual Input', mean: '사람이 직접 입력하는 일', use: '키보드나 터치로 사람이 직접 넣는 값', lv: '참고' },
+  display: { ko: '표시', en: 'Display', mean: '화면에 보여 주는 일', use: '모니터나 키오스크 화면에 보여 주는 결과', lv: '참고' }
+};
+const SYMNAME = {}, SYMMEAN = {};
+Object.keys(SYMDEF).forEach(k => { SYMNAME[k] = SYMDEF[k].ko; SYMMEAN[k] = SYMDEF[k].mean; });
+function josa(word) {
+  const c = word.charCodeAt(word.length - 1);
+  return (c >= 0xAC00 && c <= 0xD7A3 && (c - 0xAC00) % 28 !== 0) ? '은' : '는';
+}
+
+function shapeSvg(n, real) {
+  const x = n.cx - n.w / 2, y = n.cy - n.h / 2, w = n.w, h = n.h;
+  if (!real) return `<rect class="sh" x="${x}" y="${y}" width="${w}" height="${h}" rx="4"/>`;
+  if (n.k === 'term') return `<rect class="sh term" x="${x}" y="${y}" width="${w}" height="${h}" rx="${h / 2}"/>`;
+  if (n.k === 'io') return `<polygon class="sh" points="${x + 14},${y} ${x + w},${y} ${x + w - 14},${y + h} ${x},${y + h}"/>`;
+  if (n.k === 'dec') return `<polygon class="sh" points="${n.cx},${y} ${x + w},${n.cy} ${n.cx},${y + h} ${x},${n.cy}"/>`;
+  if (n.k === 'conn') return `<circle class="sh" cx="${n.cx}" cy="${n.cy}" r="${Math.min(w, h) / 2}"/>`;
+  if (n.k === 'sub') return `<rect class="sh" x="${x}" y="${y}" width="${w}" height="${h}" rx="3"/><path class="sh2" d="M${x + 12},${y} V${y + h} M${x + w - 12},${y} V${y + h}"/>`;
+  if (n.k === 'db') return `<path class="sh" d="M${x},${y + 9} C${x},${y - 3} ${x + w},${y - 3} ${x + w},${y + 9} V${y + h - 9} C${x + w},${y + h + 3} ${x},${y + h + 3} ${x},${y + h - 9} Z"/><path class="sh2" d="M${x},${y + 9} C${x},${y + 21} ${x + w},${y + 21} ${x + w},${y + 9}"/>`;
+  if (n.k === 'doc') return `<path class="sh" d="M${x},${y} H${x + w} V${y + h - 8} C${x + w * 0.75},${y + h - 18} ${x + w * 0.65},${y + h + 2} ${x + w * 0.5},${y + h - 8} C${x + w * 0.35},${y + h - 18} ${x + w * 0.25},${y + h + 2} ${x},${y + h - 8} Z"/>`;
+  return `<rect class="sh" x="${x}" y="${y}" width="${w}" height="${h}" rx="4"/>`;
+}
+
+function nodePos(spec, id) {
+  const n = spec.nodes.find(z => z.id === id);
+  if (!n) return [0, 0];
+  return n.k === 'dec' ? [n.cx - n.w / 2 + 18, n.cy] : [n.cx - n.w / 2 + 10, n.cy - n.h / 2 + 2];
+}
+
+/* o: uid, n(현재 단계 번호), view, revealed(Set), blank, focus[], pick{ids,labels,state}, ynNode, ynState, ynDone[], token */
+function drawFlow(spec, o) {
+  o = o || {};
+  const uid = o.uid || 'f';
+  const view = (o.view || [0, 0, spec.w, spec.h]).join(' ');
+  const arrows = spec.allBlank || o.n == null || o.n >= 2;
+  const rev = o.revealed || new Set();
+  let out = `<svg class="fc" viewBox="${view}" role="group" aria-label="${esc(spec.alt)}">`;
+  out += `<defs><marker id="${uid}a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10z" style="fill:var(--sub)"/></marker></defs>`;
+  spec.lines.forEach(l => {
+    const d = 'M' + l.p.map(p => p.join(',')).join(' L');
+    const on = (o.ynDone || []).some(d2 => d2.node === l.of && d2.val === l.yn) ? ' on' : '';
+    out += `<g><path class="ln${on}" d="${d}"${arrows && !l.nr ? ` marker-end="url(#${uid}a)"` : ''}/>`;
+    if (l.lb && l.of !== o.ynNode) out += `<text class="lb" x="${l.lb[1]}" y="${l.lb[2]}">${esc(l.lb[0])}</text>`;
+    out += '</g>';
+  });
+  spec.nodes.forEach(n => {
+    const isBlank = o.blank === n.id;
+    const real = !isBlank && (spec.allBlank ? rev.has(n.id) : (rev.has(n.id) || KIND_STAGE[n.k] < (o.n || 99)));
+    let cls = real ? '' : 'neutral';
+    if (isBlank) cls = 'blank';
+    if (o.focus && o.focus.includes(n.id) && !isBlank) cls += ' focus';
+    let attrs = '', badge = '';
+    if (o.pick && o.pick.ids.includes(n.id)) {
+      const st = (o.pick.state && o.pick.state[n.id]) || '';
+      cls += ' pickable ' + st;
+      attrs = ` data-node="${n.id}" tabindex="0" role="button" aria-label="${esc(n.t)}"`;
+      badge = `<g class="pbadge"><circle cx="${n.cx + n.w / 2 - 6}" cy="${n.cy - n.h / 2 + 2}" r="11"/><text x="${n.cx + n.w / 2 - 6}" y="${n.cy - n.h / 2 + 6.5}" text-anchor="middle">${o.pick.labels[n.id]}</text></g>`;
+    }
+    const dy = real ? (n.k === 'doc' ? -4 : (n.k === 'db' ? 5 : 0)) : 0;
+    out += `<g class="nd ${cls}"${attrs}>${shapeSvg(n, real)}<text x="${n.cx}" y="${n.cy + 4.5 + dy}" text-anchor="middle">${esc(n.t)}</text>${badge}</g>`;
+  });
+  if (o.ynNode) {
+    spec.lines.filter(l => l.of === o.ynNode && l.lb).forEach(l => {
+      const t = l.lb[0], x = l.lb[1], y = l.lb[2], w = t.length * 13 + 18;
+      const st = (o.ynState && o.ynState[l.yn]) || '';
+      out += `<g class="ynbtn ${st}" data-yn="${l.yn}" tabindex="0" role="button" aria-label="${esc(t)} 길"><rect x="${x - 9}" y="${y - 17}" width="${w}" height="26" rx="13"/><text x="${x}" y="${y}">${esc(t)}</text></g>`;
+    });
+  }
+  if (o.token) {
+    const p = nodePos(spec, o.token);
+    out += `<circle class="tok" r="10" cx="0" cy="0" style="transform:translate(${p[0]}px,${p[1]}px)"/>`;
+  }
+  return out + '</svg>';
+}
+
+/* ===== 무인 베이커리 키오스크 순서도 (보드판) ===== */
+const MAIN = {
+  w: 400, h: 792, alt: '무인 베이커리 키오스크 순서도',
+  nodes: [
+    { id: 'start', k: 'term', cx: 170, cy: 30, w: 130, h: 36, t: '시작(터치)' },
+    { id: 'pick', k: 'io', cx: 170, cy: 100, w: 150, h: 38, t: '빵 고르기' },
+    { id: 'stock', k: 'dec', cx: 170, cy: 190, w: 160, h: 72, t: '재고 ≥ 수량 ?' },
+    { id: 'sold', k: 'io', cx: 345, cy: 190, w: 96, h: 38, t: '품절 안내' },
+    { id: 'calc', k: 'proc', cx: 170, cy: 282, w: 170, h: 36, t: '합계 = 가격 × 수량' },
+    { id: 'show', k: 'io', cx: 170, cy: 348, w: 150, h: 36, t: '결제 금액 표시' },
+    { id: 'card', k: 'io', cx: 170, cy: 414, w: 150, h: 36, t: '카드 넣기' },
+    { id: 'pay', k: 'dec', cx: 170, cy: 506, w: 160, h: 72, t: '결제 성공 ?' },
+    { id: 'fail', k: 'io', cx: 345, cy: 506, w: 96, h: 36, t: '실패 안내' },
+    { id: 'give', k: 'io', cx: 170, cy: 600, w: 170, h: 38, t: '빵과 영수증 나옴' },
+    { id: 'more', k: 'dec', cx: 170, cy: 690, w: 160, h: 72, t: '더 살까요 ?' },
+    { id: 'end', k: 'term', cx: 170, cy: 770, w: 130, h: 36, t: '끝(인사)' }
+  ],
+  lines: [
+    { p: [[170, 48], [170, 81]] },
+    { p: [[170, 119], [170, 154]] },
+    { p: [[250, 190], [297, 190]], lb: ['아니오', 250, 178], of: 'stock', yn: 'no' },
+    { p: [[345, 171], [345, 100], [245, 100]] },
+    { p: [[170, 226], [170, 264]], lb: ['예', 180, 250], of: 'stock', yn: 'yes' },
+    { p: [[170, 300], [170, 330]] },
+    { p: [[170, 366], [170, 396]] },
+    { p: [[170, 432], [170, 470]] },
+    { p: [[250, 506], [297, 506]], lb: ['아니오', 250, 494], of: 'pay', yn: 'no' },
+    { p: [[345, 488], [345, 414], [245, 414]] },
+    { p: [[170, 542], [170, 581]], lb: ['예', 180, 566], of: 'pay', yn: 'yes' },
+    { p: [[170, 619], [170, 654]] },
+    { p: [[170, 726], [170, 752]], lb: ['아니오', 180, 744], of: 'more', yn: 'no' },
+    { p: [[90, 690], [22, 690], [22, 100], [95, 100]], lb: ['예', 30, 682], of: 'more', yn: 'yes' }
+  ]
+};
+
+/* ===== 9단계: 데이터베이스와 문서 ===== */
+const DOCDB = {
+  w: 400, h: 480, alt: '재고 DB를 읽고 영수증을 출력하는 순서도',
+  nodes: [
+    { id: 'start', k: 'term', cx: 170, cy: 28, w: 110, h: 34, t: '시작' },
+    { id: 'pick', k: 'io', cx: 170, cy: 90, w: 150, h: 36, t: '빵 고르기' },
+    { id: 'read', k: 'db', cx: 170, cy: 158, w: 140, h: 46, t: '재고 DB 읽기' },
+    { id: 'cond', k: 'dec', cx: 170, cy: 248, w: 170, h: 72, t: '재고 ≥ 수량 ?' },
+    { id: 'upd', k: 'proc', cx: 170, cy: 334, w: 150, h: 34, t: '재고 줄이기' },
+    { id: 'rcpt', k: 'doc', cx: 170, cy: 398, w: 150, h: 44, t: '영수증 출력' },
+    { id: 'sold', k: 'io', cx: 345, cy: 248, w: 96, h: 36, t: '품절 안내' },
+    { id: 'end', k: 'term', cx: 170, cy: 452, w: 110, h: 34, t: '끝' }
+  ],
+  lines: [
+    { p: [[170, 45], [170, 72]] },
+    { p: [[170, 108], [170, 134]] },
+    { p: [[170, 182], [170, 212]] },
+    { p: [[170, 284], [170, 317]], lb: ['예', 180, 306], of: 'cond', yn: 'yes' },
+    { p: [[255, 248], [297, 248]], lb: ['아니오', 255, 236], of: 'cond', yn: 'no' },
+    { p: [[170, 351], [170, 376]] },
+    { p: [[170, 420], [170, 435]] },
+    { p: [[345, 266], [345, 452], [225, 452]] }
+  ]
+};
+
+/* ===== 10단계: 미리 정의된 처리와 연결자 ===== */
+const SUBCONN = {
+  w: 400, h: 520, alt: '카드 결제 승인을 한 칸으로 묶고 연결자로 되돌아가는 순서도',
+  nodes: [
+    { id: 'start', k: 'term', cx: 170, cy: 28, w: 110, h: 34, t: '시작' },
+    { id: 'pick', k: 'io', cx: 170, cy: 90, w: 150, h: 36, t: '빵 고르기' },
+    { id: 'cin', k: 'conn', cx: 170, cy: 152, w: 36, h: 36, t: 'A' },
+    { id: 'card', k: 'io', cx: 170, cy: 214, w: 150, h: 36, t: '카드 넣기' },
+    { id: 'auth', k: 'sub', cx: 170, cy: 284, w: 170, h: 40, t: '카드 결제 승인' },
+    { id: 'pay', k: 'dec', cx: 170, cy: 372, w: 160, h: 72, t: '결제 성공 ?' },
+    { id: 'fail', k: 'io', cx: 345, cy: 372, w: 96, h: 36, t: '실패 안내' },
+    { id: 'cout', k: 'conn', cx: 345, cy: 440, w: 36, h: 36, t: 'A' },
+    { id: 'give', k: 'io', cx: 170, cy: 452, w: 150, h: 36, t: '빵 내보내기' },
+    { id: 'end', k: 'term', cx: 170, cy: 504, w: 110, h: 34, t: '끝' }
+  ],
+  lines: [
+    { p: [[170, 45], [170, 72]] },
+    { p: [[170, 108], [170, 134]] },
+    { p: [[170, 170], [170, 196]] },
+    { p: [[170, 232], [170, 264]] },
+    { p: [[170, 304], [170, 336]] },
+    { p: [[170, 408], [170, 434]], lb: ['예', 180, 426], of: 'pay', yn: 'yes' },
+    { p: [[250, 372], [297, 372]], lb: ['아니오', 250, 360], of: 'pay', yn: 'no' },
+    { p: [[345, 390], [345, 422]] },
+    { p: [[170, 470], [170, 487]] }
+  ]
+};
+
+/* ===== 최종 보스: 선물 포장 기능 ===== */
+const BOSS = {
+  w: 360, h: 480, allBlank: true, alt: '선물 포장 기능 순서도',
+  nodes: [
+    { id: 'start', k: 'term', cx: 180, cy: 28, w: 110, h: 34, t: '시작' },
+    { id: 'in', k: 'io', cx: 180, cy: 92, w: 170, h: 36, t: '포장 방법 고르기' },
+    { id: 'cond', k: 'dec', cx: 180, cy: 178, w: 180, h: 72, t: '선물 포장 ?' },
+    { id: 'wrap', k: 'proc', cx: 80, cy: 270, w: 130, h: 36, t: '리본 포장 추가' },
+    { id: 'give', k: 'io', cx: 180, cy: 336, w: 150, h: 36, t: '빵 내보내기' },
+    { id: 'rcpt', k: 'doc', cx: 180, cy: 398, w: 150, h: 44, t: '영수증 출력' },
+    { id: 'end', k: 'term', cx: 180, cy: 458, w: 110, h: 34, t: '끝' }
+  ],
+  lines: [
+    { p: [[180, 45], [180, 74]] },
+    { p: [[180, 110], [180, 142]] },
+    { p: [[90, 178], [80, 178], [80, 252]], lb: ['예', 38, 168], of: 'cond', yn: 'yes' },
+    { p: [[270, 178], [330, 178], [330, 336], [255, 336]], lb: ['아니오', 276, 168], of: 'cond', yn: 'no' },
+    { p: [[80, 288], [80, 336], [105, 336]] },
+    { p: [[180, 354], [180, 376]] },
+    { p: [[180, 420], [180, 441]] }
+  ]
+};
+
+/* ===== 기호 그림(선택 버튼, 기호 사전용) ===== */
+function symSvg(kind) {
+  const b = 'fill:var(--card);stroke:var(--accent);stroke-width:2.4';
+  const nf = 'fill:none;stroke:var(--accent);stroke-width:2.4';
+  const S = {
+    term: `<rect x="4" y="6" width="56" height="26" rx="13" style="${b}"/>`,
+    io: `<polygon points="14,6 60,6 50,32 4,32" style="${b}"/>`,
+    proc: `<rect x="4" y="6" width="56" height="26" rx="3" style="${b}"/>`,
+    dec: `<polygon points="32,3 60,19 32,35 4,19" style="${b}"/>`,
+    doc: `<path d="M4,5 H60 V27 C50,21 44,33 32,27 C20,21 14,33 4,27 Z" style="${b}"/>`,
+    db: `<path d="M10,10 C10,2 54,2 54,10 V28 C54,36 10,36 10,28 Z" style="${b}"/><path d="M10,10 C10,18 54,18 54,10" style="${nf}"/>`,
+    sub: `<rect x="4" y="6" width="56" height="26" rx="3" style="${b}"/><path d="M12,6 V32 M52,6 V32" style="${nf}"/>`,
+    conn: `<circle cx="32" cy="19" r="13" style="${b}"/>`,
+    hex: `<polygon points="14,6 50,6 62,19 50,32 14,32 2,19" style="${b}"/>`,
+    manual: `<polygon points="4,13 60,4 60,32 4,32" style="${b}"/>`,
+    display: `<path d="M3,19 L15,6 H48 Q62,6 62,19 Q62,32 48,32 H15 Z" style="${b}"/>`,
+    arrow: `<path d="M6,19 L50,19" style="stroke:var(--sub);stroke-width:2.4;fill:none"/><path d="M48,11 L61,19 L48,27z" style="fill:var(--sub)"/>`
+  };
+  return `<svg viewBox="0 0 64 38" aria-hidden="true">${S[kind] || ''}</svg>`;
+}
+const ALL8 = ['term', 'io', 'proc', 'dec', 'doc', 'db', 'sub', 'conn'];
+/* ===== 보는 범위 ===== */
+const V_TOP = [0, 0, 400, 245], V_MID = [0, 245, 400, 290], V_PAY = [0, 385, 400, 250], V_END = [0, 570, 400, 222];
+const V_LONG1 = [0, 150, 400, 400], V_LONG2 = [0, 150, 400, 490];
+
+/* 질문 한 묶음 = 상황(sit) + 단계(steps). 말은 from에서 출발해 to에 도착해요.
+   steps: sym(기호 고르기), yn(예/아니오 길 누르기), next(다음 칸 예측), mcq(보기 고르기, opts 첫 번째가 정답, m은 오답 안내) */
+const STAGES = [
+  { name: '시작과 끝, 타원', diff: 1,
+    know: ['알아두기', '순서도는 정해진 도형으로 그려요. 타원(Terminator, 우리말로 단말)은 시작과 끝을 나타내요. 키오스크에서는 "터치해서 시작" 화면과 "안녕히 가세요" 화면이 타원이에요.'],
+    qs: [
+    { sit: '손님이 키오스크 화면을 터치하면 "주문을 시작합니다"가 떠요. 말은 순서도 맨 위의 이 칸에서 출발해요.',
+      from: 'start', to: 'pick', view: V_TOP,
+      hints: ['순서도에서 가장 처음 나오는 칸이에요.', '시작과 끝은 양쪽이 둥근 도형을 써요.'],
+      steps: [
+        { t: 'sym', node: 'start', ans: 'term', e: '시작 칸은 타원이에요. 모든 순서도는 타원에서 출발해요.' },
+        { t: 'next', ans: 'pick', cands: ['pick', 'stock', 'sold'], e: '화살표를 따라가면 "빵 고르기"예요. 말은 화살표가 가리키는 칸으로만 가요.' }
+      ] },
+    { sit: '주문이 모두 끝나면 "안녕히 가세요"가 떠요. 순서도 맨 아래에 있는 이 칸에서 키오스크의 일이 끝나요.',
+      from: 'more', to: 'end', view: V_END,
+      hints: ['순서도의 마지막 칸이에요.', '맨 위 칸과 같은 모양의 도형이에요.'],
+      steps: [
+        { t: 'sym', node: 'end', ans: 'term', e: '끝 칸도 타원이에요. 시작과 끝은 같은 도형으로 그려요.' },
+        { t: 'mcq', q: '말이 이 칸에 도착하면 키오스크는 어떻게 될까요?',
+          opts: ['한 손님의 주문이 끝난다', '다시 빵 고르기로 간다', '결제를 새로 시작한다'],
+          m: ['끝 칸에서는 더 나가는 화살표가 없어요. 되돌아가는 길은 마름모의 "예" 길에 따로 있어요.', '결제는 중간 단계에서 해요. 끝 칸에서는 더 나갈 길이 없어요.'],
+          e: '끝 칸에서는 더 나가는 화살표가 없어서 흐름이 멈춰요.' }
+      ] }
+  ]},
+  { name: '흐름을 알려 주는 화살표', diff: 1,
+    know: ['알아두기', '화살표(Flowline, 우리말로 흐름선)는 "다음에 어디로 갈지"를 알려 줘요. 말은 화살표가 가리키는 방향으로만 갈 수 있어요. 화살표를 거꾸로 읽으면 순서가 엉망이 돼요.'],
+    qs: [
+    { sit: '손님이 "소금빵"을 골랐어요. 말은 "빵 고르기" 칸에 있어요.',
+      from: 'pick', to: 'stock', view: V_TOP,
+      hints: ['"빵 고르기" 칸에서 나가는 화살표가 가리키는 쪽을 보세요.', '위에서 아래로 이어진 화살표예요.'],
+      steps: [
+        { t: 'mcq', q: '화살표는 무엇을 알려 줄까요?',
+          opts: ['다음에 갈 칸의 방향', '빵의 가격', '남은 재고의 개수'],
+          m: ['가격은 화살표가 알려 주지 않아요. 가격은 계산 칸에서 다뤄요.', '재고는 마름모에서 비교해요. 화살표는 방향만 알려 줘요.'],
+          e: '화살표는 순서를 알려 줘요. 방향이 곧 실행 순서예요.' },
+        { t: 'next', ans: 'stock', cands: ['stock', 'sold', 'calc'], e: '"빵 고르기" 다음에는 재고를 따져 보는 칸으로 이어져요.' }
+      ] },
+    { sit: '재고가 충분해서 말이 "합계 = 가격 × 수량" 칸까지 왔어요.',
+      from: 'calc', to: 'show', view: [0, 245, 400, 290],
+      hints: ['계산이 끝난 다음에는 무엇을 보여 줄까요?', '합계 계산 칸 아래로 이어진 화살표예요.'],
+      steps: [
+        { t: 'next', ans: 'show', cands: ['show', 'card', 'pay'], e: '계산한 금액을 손님에게 먼저 보여 줘요. 그 다음에 카드를 받아요.' },
+        { t: 'mcq', q: '만약 화살표가 거꾸로 "결제 금액 표시 → 합계 계산"이라면 어떻게 될까요?',
+          opts: ['계산도 하기 전에 금액을 보여 주려는 모순이 생긴다', '아무 문제 없이 똑같이 동작한다', '손님이 더 빨리 결제할 수 있다'],
+          m: ['순서가 바뀌면 결과가 달라질 수 있어요. 계산 전에는 보여 줄 금액이 없어요.', '결제가 빨라지지 않아요. 보여 줄 금액이 아직 없는 상태가 돼요.'],
+          e: '화살표 방향이 바뀌면 알고리즘의 순서도 바뀌어요. 그래서 방향이 중요해요.' }
+      ] }
+  ]},
+  { name: '입력과 출력, 평행사변형', diff: 1,
+    know: ['알아두기', '평행사변형(Input/Output, 우리말로 입출력)은 입력과 출력이에요. 손님이 기계에 값을 넣으면 입력, 기계가 화면에 결과를 보여 주면 출력이에요.'],
+    qs: [
+    { sit: '손님이 터치 화면에서 "소금빵" 버튼을 눌러요. 말은 "빵 고르기" 칸에 있어요.',
+      from: 'pick', to: 'pick', view: V_TOP,
+      hints: ['손님이 기계에 값을 "넣는" 일이에요.', '화면을 누르는 것도 값을 넣는 일이에요.'],
+      steps: [
+        { t: 'sym', node: 'pick', ans: 'io', e: '입력 칸은 평행사변형이에요.' },
+        { t: 'mcq', q: '"빵 고르기"는 입력일까요, 출력일까요?',
+          opts: ['입력 (손님이 기계에 값을 넣는다)', '출력 (기계가 결과를 보여 준다)', '처리 (기계 안에서 계산한다)'],
+          m: ['출력은 기계가 손님에게 보여 주는 일이에요. 여기서는 손님이 누르고 있어요.', '처리는 기계 안에서 일어나는 계산이에요. 버튼을 누르는 일은 계산이 아니에요.'],
+          e: '손님이 값을 넣으니 입력이에요. 입력과 출력은 같은 평행사변형으로 그려요.' }
+      ] },
+    { sit: '화면에 "결제 금액 5,000원"이 떠요. 말은 "결제 금액 표시" 칸에 있어요.',
+      from: 'show', to: 'card', view: [0, 245, 400, 290],
+      hints: ['기계가 손님에게 "보여 주는" 일이에요.', '값이 기계 밖으로 나가는 쪽이에요.'],
+      steps: [
+        { t: 'sym', node: 'show', ans: 'io', e: '출력 칸도 평행사변형이에요.' },
+        { t: 'mcq', q: '"결제 금액 표시"는 입력일까요, 출력일까요?',
+          opts: ['출력 (기계가 결과를 보여 준다)', '입력 (손님이 값을 넣는다)', '처리 (기계 안에서 계산한다)'],
+          m: ['입력은 손님이 기계에 값을 넣는 일이에요. 여기서는 기계가 보여 주고 있어요.', '계산은 앞 칸에서 이미 끝났어요. 이 칸은 결과를 보여 주기만 해요.'],
+          e: '결과를 화면에 보여 주니 출력이에요.' },
+        { t: 'next', ans: 'card', cands: ['card', 'calc', 'pay'], e: '금액을 확인한 손님이 카드를 넣어요.' }
+      ] },
+    { sit: '손님이 결제 단말기에 카드를 꽂아요. 말은 "카드 넣기" 칸에 있어요.',
+      from: 'card', to: 'card', view: [0, 245, 400, 290],
+      hints: ['손님이 기계에 무언가를 "넣는" 일이에요.', '앞의 "빵 고르기"와 같은 종류예요.'],
+      steps: [
+        { t: 'sym', node: 'card', ans: 'io', e: '카드를 넣는 일은 입력이라서 평행사변형이에요.' },
+        { t: 'mcq', q: '다음 중 평행사변형으로 그릴 일이 아닌 것은?',
+          opts: ['금액을 계산한다', '카드를 넣는다', '영수증을 출력한다'],
+          m: ['카드를 넣는 것은 입력이에요. 평행사변형으로 그려요.', '영수증이 나오는 것은 출력이에요. 평행사변형으로 그려요.'],
+          e: '계산은 처리예요. 처리는 다음 단계에서 배울 직사각형으로 그려요.' }
+      ] }
+  ]},
+  { name: '처리, 직사각형', diff: 2,
+    know: ['알아두기', '직사각형(Process, 우리말로 처리)은 기계 안에서 계산하거나 값을 바꾸는 일이에요. 손님 눈에는 보이지 않고, 결과만 출력 칸에서 보여 줘요.'],
+    qs: [
+    { sit: '소금빵 2개를 골랐어요. 가격은 개당 2,500원이에요. 키오스크가 "2,500 × 2"를 계산해요.',
+      from: 'calc', to: 'show', view: [0, 245, 400, 290],
+      hints: ['계산하는 일은 기계 안에서 일어나요.', '입력도 출력도 아닌 일이에요.'],
+      steps: [
+        { t: 'sym', node: 'calc', ans: 'proc', e: '계산하는 칸은 직사각형이에요.' },
+        { t: 'mcq', q: '이 칸에서 계산된 합계는 얼마일까요?',
+          opts: ['5,000원', '2,500원', '4,500원'],
+          m: ['2,500원은 빵 한 개의 가격이에요. 2개니까 곱해야 해요.', '2,500 × 2 는 5,000이에요. 4,500이 아니에요.'],
+          e: '2,500 × 2 = 5,000원이에요.' },
+        { t: 'next', ans: 'show', cands: ['show', 'card', 'pay'], e: '계산이 끝나면 그 금액을 화면에 보여 줘요.' }
+      ] },
+    { sit: '키오스크 안에서 일어나는 일들을 세 가지로 나눠 보려고 해요.',
+      from: 'calc', to: 'calc', view: [0, 245, 400, 290],
+      hints: ['처리는 기계 안에서 계산하거나 값을 바꾸는 일이에요.', '버튼을 누르는 것은 입력, 화면에 보여 주는 것은 출력이에요.'],
+      steps: [
+        { t: 'mcq', q: '다음 중 직사각형(처리)으로 그려야 하는 일은?',
+          opts: ['쿠폰 금액을 빼서 합계를 다시 계산한다', '손님이 "크루아상" 버튼을 누른다', '화면에 "결제 금액"을 보여 준다'],
+          m: ['버튼을 누르는 것은 손님이 값을 넣는 입력이에요.', '화면에 보여 주는 것은 출력이에요.'],
+          e: '값을 계산해서 바꾸는 일이 처리예요.' }
+      ] }
+  ]},
+  { name: '예와 아니오, 마름모', diff: 2,
+    know: ['알아두기', '마름모(Decision, 우리말로 판단)는 "예" 또는 "아니오"로 답하는 질문이에요. 마름모에서는 길이 두 갈래로 나뉘어요. 질문이 맞으면 "예" 길, 아니면 "아니오" 길로 가요.'],
+    qs: [
+    { sit: '소금빵을 골랐더니 키오스크가 "재고가 고른 수량 이상인가?"를 따져 봐요. 말은 이 칸에 있어요.',
+      from: 'stock', to: 'stock', view: V_TOP,
+      hints: ['"예" 또는 "아니오"로 답하는 질문이에요.', '이 칸에서 나가는 길이 몇 갈래인지 세어 보세요.'],
+      steps: [
+        { t: 'sym', node: 'stock', ans: 'dec', e: '질문을 던져서 길을 나누는 칸은 마름모예요.' },
+        { t: 'mcq', q: '이 칸에서 나가는 길은 몇 갈래일까요?',
+          opts: ['2갈래: 예와 아니오', '1갈래: 다음 칸 하나', '3갈래: 예, 아니오, 모름'],
+          m: ['한 갈래뿐이라면 질문할 필요가 없어요. 마름모는 길을 나누는 칸이에요.', '순서도의 질문은 예와 아니오 두 가지로만 답해요.'],
+          e: '마름모는 언제나 예와 아니오, 두 갈래로 나뉘어요.' }
+      ] },
+    { sit: '카드를 넣으면 키오스크가 "결제 성공?"을 확인해요. 말은 이 칸에 있어요.',
+      from: 'pay', to: 'pay', view: V_PAY,
+      hints: ['결제가 성공했는지 아닌지를 묻고 있어요.', '앞에서 배운 "재고 ≥ 수량 ?" 칸과 같은 종류예요.'],
+      steps: [
+        { t: 'sym', node: 'pay', ans: 'dec', e: '결제가 성공했는지 묻는 칸도 마름모예요.' },
+        { t: 'mcq', q: '마름모 안의 질문은 어떻게 답할 수 있어야 할까요?',
+          opts: ['예 또는 아니오로 답할 수 있어야 한다', '숫자로 계산해서 답해야 한다', '아무 말이나 써도 된다'],
+          m: ['계산은 직사각형(처리)에서 해요. 마름모에는 예/아니오 질문을 적어요.', '길이 예와 아니오로만 나뉘니까 답도 둘 중 하나여야 해요.'],
+          e: '"결제 성공?"처럼 예 또는 아니오로 답할 수 있는 질문을 적어요.' }
+      ] },
+    { sit: '빵을 받은 손님의 화면에 "더 살까요?"가 떠요. 말은 이 칸에 있어요.',
+      from: 'more', to: 'more', view: V_END,
+      hints: ['더 사는지 아닌지를 묻고 있어요.', '손님이 예 또는 아니오를 누를 수 있어요.'],
+      steps: [
+        { t: 'sym', node: 'more', ans: 'dec', e: '더 살지 묻는 칸도 마름모예요.' },
+        { t: 'mcq', q: '다음 중 마름모에 넣기에 알맞은 질문은?',
+          opts: ['쿠폰이 있나요?', '쿠폰 번호 입력', '쿠폰 할인 계산하기'],
+          m: ['"쿠폰 번호 입력"은 값을 넣는 입력이라서 평행사변형이에요.', '"쿠폰 할인 계산하기"는 계산하는 처리라서 직사각형이에요.'],
+          e: '예 또는 아니오로 답할 수 있는 "쿠폰이 있나요?"가 마름모에 알맞아요.' }
+      ] }
+  ]},
+  { name: '예와 아니오 길 따라가기', diff: 2,
+    know: ['알아두기', '조건에 값을 넣어서 참인지 거짓인지 먼저 따져 보세요. 참이면 "예" 길, 거짓이면 "아니오" 길로 가요. "≥"는 "크거나 같다"는 뜻이에요.'],
+    qs: [
+    { sit: '크루아상은 재고가 0개예요. 손님이 크루아상 1개를 골랐어요.',
+      from: 'stock', to: 'sold', view: V_TOP,
+      hints: ['0 ≥ 1 이 맞는지 따져 보세요.', '틀린 말이면 "아니오" 길이에요.'],
+      steps: [
+        { t: 'yn', node: 'stock', ans: 'no', q: '"재고 ≥ 수량 ?" 에 알맞은 길을 순서도에서 눌러 보세요. (재고 0, 수량 1)', e: '0 ≥ 1 은 틀린 말이라서 "아니오" 길이에요.' },
+        { t: 'next', ans: 'sold', cands: ['sold', 'calc', 'pick'], e: '"아니오" 길을 따라가면 "품절 안내"예요.' }
+      ] },
+    { sit: '소금빵은 재고가 3개예요. 손님이 소금빵 2개를 골랐어요.',
+      from: 'stock', to: 'calc', view: [0, 95, 400, 250],
+      hints: ['3 ≥ 2 가 맞는지 따져 보세요.', '맞는 말이면 "예" 길이에요.'],
+      steps: [
+        { t: 'yn', node: 'stock', ans: 'yes', q: '"재고 ≥ 수량 ?" 에 알맞은 길을 순서도에서 눌러 보세요. (재고 3, 수량 2)', e: '3 ≥ 2 는 맞는 말이라서 "예" 길이에요.' },
+        { t: 'next', ans: 'calc', cands: ['calc', 'sold', 'show'], e: '"예" 길을 따라가면 합계를 계산하는 칸이에요.' }
+      ] },
+    { sit: '소금빵은 재고가 3개예요. 손님이 정확히 3개를 골랐어요.',
+      from: 'stock', to: 'calc', view: [0, 95, 400, 250],
+      hints: ['3 ≥ 3 은 맞는 말일까요?', '"≥"는 같은 경우도 포함해요.'],
+      steps: [
+        { t: 'yn', node: 'stock', ans: 'yes', q: '"재고 ≥ 수량 ?" 에 알맞은 길을 순서도에서 눌러 보세요. (재고 3, 수량 3)', e: '3 ≥ 3 은 같아도 맞는 말이에요. 재고가 딱 맞으면 살 수 있어요.' },
+        { t: 'next', ans: 'calc', cands: ['calc', 'sold', 'show'], e: '"예" 길을 따라 합계 계산으로 가요.' }
+      ] },
+    { sit: '카드를 넣었는데 화면에 "승인 거절"이 떴어요.',
+      from: 'pay', to: 'fail', view: V_PAY,
+      hints: ['결제가 성공했나요?', '거절이 떴다면 성공이 아니에요.'],
+      steps: [
+        { t: 'yn', node: 'pay', ans: 'no', q: '"결제 성공 ?" 에 알맞은 길을 순서도에서 눌러 보세요.', e: '승인이 거절됐으니 결제가 성공한 것이 아니에요. "아니오" 길이에요.' },
+        { t: 'next', ans: 'fail', cands: ['fail', 'give', 'card'], e: '"아니오" 길을 따라가면 "실패 안내"예요.' }
+      ] }
+  ]},
+  { name: '두 번 갈라지는 길', diff: 3,
+    know: ['알아두기', '마름모가 연달아 나오면 앞의 대답이 다음 길을 정해요. 첫 번째 마름모에서 "아니오"가 나오면 두 번째 마름모까지 가지 못할 수도 있어요.'],
+    qs: [
+    { sit: '소금빵 재고는 5개, 수량은 2개예요. 카드를 넣었는데 승인이 거절됐어요.',
+      from: 'stock', to: 'fail', view: V_LONG1,
+      hints: ['첫 번째 마름모는 5 ≥ 2 가 맞는지 따져요.', '두 번째 마름모는 결제가 성공했는지 따져요.'],
+      steps: [
+        { t: 'yn', node: 'stock', ans: 'yes', q: '첫 번째 마름모 "재고 ≥ 수량 ?" 의 길을 눌러 보세요. (재고 5, 수량 2)', e: '5 ≥ 2 는 맞는 말이라서 "예" 길이에요.' },
+        { t: 'yn', node: 'pay', ans: 'no', q: '두 번째 마름모 "결제 성공 ?" 의 길을 눌러 보세요. (승인 거절)', e: '승인이 거절됐으니 "아니오" 길이에요.' },
+        { t: 'next', ans: 'fail', cands: ['fail', 'sold', 'give'], e: '두 번 갈라진 끝에 "실패 안내" 칸에 도착해요.' }
+      ] },
+    { sit: '크루아상 재고는 0개, 수량은 1개예요. 카드는 손님 지갑에 있어요.',
+      from: 'stock', to: 'sold', view: V_TOP,
+      hints: ['0 ≥ 1 은 맞는 말일까요?', '첫 마름모에서 "아니오"가 나오면 어디로 갈까요?'],
+      steps: [
+        { t: 'yn', node: 'stock', ans: 'no', q: '"재고 ≥ 수량 ?" 의 길을 눌러 보세요. (재고 0, 수량 1)', e: '0 ≥ 1 은 틀린 말이라서 "아니오" 길이에요.' },
+        { t: 'mcq', q: '말이 "결제 성공 ?" 마름모까지 가게 될까요?',
+          opts: ['가지 않는다. 품절 안내를 본 뒤 빵 고르기로 돌아간다', '간다. 카드를 넣고 결제를 확인한다', '간다. 바로 끝 칸으로 간다'],
+          m: ['"아니오" 길은 "품절 안내"로 이어져요. 카드를 넣는 칸으로 가지 않아요.', '끝 칸으로 가는 길은 "더 살까요?"의 "아니오" 길뿐이에요.'],
+          e: '앞의 마름모에서 막히면 뒤의 마름모는 만나지 못해요. 순서도는 길을 따라가는 거예요.' }
+      ] },
+    { sit: '소금빵 재고는 5개, 수량은 1개예요. 카드 승인이 성공했어요.',
+      from: 'stock', to: 'give', view: V_LONG2,
+      hints: ['5 ≥ 1 은 맞는 말이에요.', '승인이 성공했으면 "결제 성공 ?"은 맞는 말이에요.'],
+      steps: [
+        { t: 'yn', node: 'stock', ans: 'yes', q: '첫 번째 마름모 "재고 ≥ 수량 ?" 의 길을 눌러 보세요. (재고 5, 수량 1)', e: '5 ≥ 1 은 맞는 말이라서 "예" 길이에요.' },
+        { t: 'yn', node: 'pay', ans: 'yes', q: '두 번째 마름모 "결제 성공 ?" 의 길을 눌러 보세요. (승인 성공)', e: '승인이 성공했으니 "예" 길이에요.' },
+        { t: 'next', ans: 'give', cands: ['give', 'fail', 'sold'], e: '두 번 모두 "예"를 지나 "빵과 영수증 나옴" 칸에 도착해요.' }
+      ] }
+  ]},
+  { name: '되돌아가는 길, 반복', diff: 3,
+    know: ['알아두기', '화살표가 앞 칸으로 되돌아가면 같은 일을 다시 해요. 결제가 실패하면 "카드 넣기"로 돌아가서 다시 시도해요. 조건이 맞을 때까지 되풀이할 수 있어요.'],
+    qs: [
+    { sit: '결제가 거절돼서 "실패 안내"가 떠요. 그 칸에서 나온 화살표가 위로 되돌아가요. 말은 "실패 안내" 칸에 있어요.',
+      from: 'fail', to: 'card', view: V_PAY,
+      hints: ['"실패 안내" 칸에서 나가는 화살표를 따라가 보세요.', '다시 시도할 수 있게 앞 칸으로 돌아가요.'],
+      steps: [
+        { t: 'mcq', q: '위로 되돌아가는 화살표는 어떤 뜻일까요?',
+          opts: ['같은 일을 다시 한다', '프로그램을 끝낸다', '빵을 새로 만든다'],
+          m: ['끝내는 칸은 타원이에요. 이 화살표는 끝으로 가지 않고 앞 칸으로 돌아가요.', '순서도는 기계의 동작 순서를 그린 거예요. 빵을 만드는 일과 상관없어요.'],
+          e: '되돌아가는 화살표는 같은 일을 다시 한다는 뜻이에요. 이것을 반복이라고 해요.' },
+        { t: 'next', ans: 'card', cands: ['card', 'pay', 'give'], e: '손님이 카드를 다시 넣을 수 있도록 "카드 넣기" 칸으로 돌아가요.' }
+      ] },
+    { sit: '카드 승인이 두 번 거절되고, 세 번째에 성공했어요. 말은 "결제 성공 ?" 칸에 있어요.',
+      from: 'pay', to: 'give', view: V_PAY,
+      hints: ['거절될 때마다 "결제 성공 ?"을 다시 확인해요.', '성공한 마지막 시도에서도 확인해요.'],
+      steps: [
+        { t: 'mcq', q: '"결제 성공 ?" 마름모를 모두 몇 번 지나갔을까요?',
+          opts: ['3번', '1번', '2번'],
+          m: ['한 번만 지나지 않았어요. 시도할 때마다 이 마름모에서 확인해요.', '2번이면 성공하기 전에 멈춰요. 성공한 세 번째 시도에서도 확인해요.'],
+          e: '시도할 때마다 확인하니까 거절 2번과 성공 1번, 모두 3번이에요.' },
+        { t: 'next', ans: 'give', cands: ['give', 'fail', 'card'], e: '결제에 성공해서 "예" 길을 따라 "빵과 영수증 나옴" 칸으로 가요.' }
+      ] },
+    { sit: '빵을 받은 손님에게 "더 살까요?"가 떠요. 손님이 "예"를 눌러요.',
+      from: 'more', to: 'more', view: V_END,
+      hints: ['"더 살까요?"에서 "예"를 누르면 새 빵을 고르러 가요.', '"예" 길의 화살표는 위쪽으로 길게 이어져 있어요.'],
+      steps: [
+        { t: 'yn', node: 'more', ans: 'yes', q: '"더 살까요 ?" 의 길을 눌러 보세요. (손님이 예를 눌렀어요)', e: '손님이 "예"를 눌렀으니 "예" 길이에요.' },
+        { t: 'mcq', q: '"예" 길의 화살표는 어느 칸으로 되돌아갈까요?',
+          opts: ['빵 고르기', '시작(터치)', '끝(인사)'],
+          m: ['시작 칸으로는 돌아가지 않아요. 손님은 이미 주문 중이라서 빵 고르기부터 다시 해요.', '끝 칸은 "아니오" 길로 가는 칸이에요.'],
+          e: '"예" 길은 "빵 고르기"로 되돌아가요. 손님이 원하는 만큼 계속 살 수 있어요.' }
+      ] }
+  ]},
+  { name: '자료를 다루는 기호, 데이터베이스와 문서', diff: 2,
+    know: ['알아두기', '실제 서비스에서는 자료를 저장해 두고 꺼내 써요. 데이터베이스(Database, 우리말로 데이터베이스 또는 저장 데이터)는 재고, 회원 정보 같은 자료를 저장해 두는 곳이에요. 문서(Document, 우리말로 문서)는 영수증이나 보고서처럼 문서로 나오는 결과를 나타내요.'],
+    qs: [
+    { chart: 'docdb', sit: '키오스크는 빵 재고를 "재고 장부"에 저장해 두고, 필요할 때 읽어 와요. 말은 "재고 DB 읽기" 칸에 있어요.',
+      from: 'read', to: 'cond', view: [0, 0, 400, 290],
+      hints: ['장부처럼 자료를 모아 두는 곳을 나타내는 기호예요.', '위아래가 둥근 통(원통)을 떠올려 보세요.'],
+      steps: [
+        { t: 'sym', node: 'read', ans: 'db', choices: ['db', 'doc', 'proc', 'io'], e: '자료를 저장해 두는 곳은 원통 모양의 데이터베이스 기호로 그려요.' },
+        { t: 'mcq', q: '"재고 DB 읽기"는 어떤 일을 하는 칸일까요?',
+          opts: ['저장해 둔 재고 자료를 읽어 온다', '손님에게 영수증을 보여 준다', '예와 아니오로 길을 나눈다'],
+          m: ['영수증은 문서(Document) 기호로 그리는 다른 칸이에요.', '길을 나누는 칸은 마름모예요. 이 칸은 자료를 읽어 와요.'],
+          e: '데이터베이스 칸은 자료를 읽어 오거나 저장하는 일을 나타내요.' },
+        { t: 'next', ans: 'cond', cands: ['cond', 'upd', 'sold'], e: '읽어 온 재고 숫자를 마름모에서 수량과 비교해요.' }
+      ] },
+    { chart: 'docdb', sit: '재고가 충분해서 판매가 끝나요. 재고를 줄인 뒤에는 종이 영수증이 나와요. 말은 "재고 줄이기" 칸에 있어요.',
+      from: 'upd', to: 'rcpt', view: [0, 230, 400, 250],
+      hints: ['영수증은 종이나 파일로 남는 결과예요.', '아래쪽이 물결 모양으로 굽은 기호예요.'],
+      steps: [
+        { t: 'sym', node: 'rcpt', ans: 'doc', choices: ['doc', 'io', 'proc', 'db'], e: '영수증처럼 문서로 나오는 결과는 문서 기호로 그려요.' },
+        { t: 'next', ans: 'rcpt', cands: ['rcpt', 'end', 'cond'], e: '재고를 줄인 다음에는 영수증을 출력해요.' }
+      ] },
+    { chart: 'docdb', sit: '크루아상 재고는 0개예요. 손님이 크루아상 1개를 골랐어요. 말은 "재고 ≥ 수량 ?" 칸에 있어요.',
+      from: 'cond', to: 'sold', view: [0, 120, 400, 240],
+      hints: ['0 ≥ 1 이 맞는지 따져 보세요.', '틀린 말이면 "아니오" 길이에요.'],
+      steps: [
+        { t: 'yn', node: 'cond', ans: 'no', q: '"재고 ≥ 수량 ?" 의 길을 눌러 보세요. (재고 0, 수량 1)', e: '0 ≥ 1 은 틀린 말이라서 "아니오" 길이에요.' },
+        { t: 'next', ans: 'sold', cands: ['sold', 'upd', 'rcpt'], e: '"아니오" 길을 따라가면 "품절 안내"예요. 재고를 줄이거나 영수증을 내보내지 않아요.' }
+      ] }
+  ]},
+  { name: '순서도를 정리하는 기호, 서브루틴과 연결자', diff: 3,
+    know: ['알아두기', '복잡한 일은 한 칸으로 묶어서 그려요. 미리 정의된 처리(Predefined Process, 우리말로 미리 정의된 처리 또는 서브루틴)는 따로 만들어 둔 처리를 불러오는 칸이에요. 연결자(Connector, 우리말로 연결자)는 선이 길어질 때 같은 글자가 적힌 두 원으로 떨어진 곳을 이어 줘요.'],
+    qs: [
+    { chart: 'subconn', sit: '카드 결제는 은행과 통신하는 복잡한 과정이에요. 그래서 순서도에는 "카드 결제 승인" 한 칸으로 줄이고, 자세한 순서도는 따로 그려요.',
+      from: 'card', to: 'pay', view: [0, 170, 400, 260],
+      hints: ['직사각형처럼 보이지만 양옆에 세로선이 있어요.', '"이미 만들어 둔 처리를 불러온다"는 뜻이에요.'],
+      steps: [
+        { t: 'sym', node: 'auth', ans: 'sub', choices: ['sub', 'proc', 'io', 'conn'], e: '따로 만들어 둔 처리를 불러오는 칸은 양옆에 세로선이 있는 직사각형이에요.' },
+        { t: 'mcq', q: '미리 정의된 처리 칸을 쓰는 이유는?',
+          opts: ['복잡한 일을 한 칸으로 묶어 순서도를 간단하게 하려고', '손님에게 결제 금액을 보여 주려고', '예와 아니오로 길을 나누려고'],
+          m: ['금액을 보여 주는 일은 입출력 칸이에요.', '길을 나누는 칸은 마름모예요.'],
+          e: '자세한 내용은 따로 그려 두고 한 칸으로 줄이면 전체 순서도가 한눈에 들어와요.' },
+        { t: 'next', ans: 'pay', cands: ['pay', 'give', 'fail'], e: '승인 결과가 나오면 "결제 성공 ?"으로 이어져요.' }
+      ] },
+    { chart: 'subconn', sit: '결제가 실패하면 "실패 안내" 아래에 "A"가 적힌 원이 있어요. 순서도 위쪽, "빵 고르기" 아래에도 "A" 원이 있어요. 말은 "실패 안내" 칸에 있어요.',
+      from: 'fail', to: 'cin', view: [0, 90, 400, 400],
+      hints: ['선이 길어질 때 선 대신 쓰는 작은 원이에요.', '같은 글자가 적힌 원끼리 이어져요.'],
+      steps: [
+        { t: 'sym', node: 'cout', also: ['cin'], ans: 'conn', choices: ['conn', 'term', 'dec', 'db'], e: '작은 원은 연결자예요. 같은 글자가 적힌 원끼리 이어져요.' },
+        { t: 'mcq', q: '같은 글자 "A"가 적힌 두 원은 무슨 뜻일까요?',
+          opts: ['두 곳이 이어져 있다는 표시', '"A"라는 이름의 손님이 둘이라는 표시', '순서도가 두 번 시작된다는 표시'],
+          m: ['글자는 손님 이름이 아니라 짝을 알려 주는 이름표예요.', '순서도의 시작은 타원 하나뿐이에요. 원은 이어 주는 표시예요.'],
+          e: '연결자 덕분에 긴 되돌아가기 화살표를 그리지 않아도 돼요.' },
+        { t: 'next', ans: 'cin', cands: ['cin', 'start', 'give'], e: '아래쪽 "A"에 도착하면 위쪽 "A"에서 이어 가요. 그래서 "카드 넣기"부터 다시 시도해요.' }
+      ] },
+    { chart: 'subconn', sit: '카드 승인이 거절됐어요. 말은 "결제 성공 ?" 칸에 있어요.',
+      from: 'pay', to: 'fail', view: [0, 320, 400, 160],
+      hints: ['결제가 성공했나요?', '거절됐다면 성공이 아니에요.'],
+      steps: [
+        { t: 'yn', node: 'pay', ans: 'no', q: '"결제 성공 ?" 의 길을 눌러 보세요. (승인 거절)', e: '승인이 거절됐으니 "아니오" 길이에요.' },
+        { t: 'next', ans: 'fail', cands: ['fail', 'give', 'cout'], e: '"아니오" 길을 따라가면 "실패 안내"예요.' }
+      ] }
+  ]},
+  { name: '최종 보스, 순서도 완성', diff: 3,
+    know: ['알아두기', '이제 기호를 모두 배웠어요. 타원은 시작과 끝, 평행사변형은 입력과 출력, 직사각형은 처리, 마름모는 예/아니오 질문, 문서는 영수증 같은 문서 출력, 데이터베이스는 자료 저장소, 서브루틴은 따로 만든 처리, 연결자는 떨어진 곳을 잇는 원이에요. 상황을 읽고 칸마다 알맞은 기호를 골라 보세요.'],
+    qs: [
+    { chart: 'boss', sit: '새 기능이에요. 손님이 "선물 포장"을 고르면 리본 포장을 추가하고, 마지막에 영수증을 출력해요. 회색 칸마다 알맞은 기호를 골라 순서도를 완성하자.',
+      from: 'start', to: 'end', view: [0, 0, 360, 480],
+      hints: ['값을 받는 칸과 보여 주는 칸은 평행사변형이에요.', '질문을 던지는 칸은 마름모, 영수증은 문서예요.'],
+      steps: [
+        { t: 'sym', node: 'start', ans: 'term', choices: ALL8, e: '시작은 타원이에요.' },
+        { t: 'sym', node: 'in', ans: 'io', choices: ALL8, e: '손님이 포장 방법을 고르는 일은 입력이라서 평행사변형이에요.' },
+        { t: 'sym', node: 'cond', ans: 'dec', choices: ALL8, e: '"선물 포장 ?"은 예 또는 아니오로 답하는 질문이라서 마름모예요.' },
+        { t: 'yn', node: 'cond', ans: 'yes', q: '선물 포장을 고른 손님이에요. 어느 길로 갈까요?', e: '선물 포장이 맞으니 "예" 길이에요.' },
+        { t: 'next', ans: 'wrap', cands: ['wrap', 'give', 'end'], e: '"예" 길을 따라가면 "리본 포장 추가" 칸이에요.' },
+        { t: 'sym', node: 'wrap', ans: 'proc', choices: ALL8, e: '포장을 추가하는 일은 기계가 처리하는 일이라서 직사각형이에요.' },
+        { t: 'sym', node: 'give', ans: 'io', choices: ALL8, e: '빵을 내보내는 일은 출력이라서 평행사변형이에요.' },
+        { t: 'sym', node: 'rcpt', ans: 'doc', choices: ALL8, e: '영수증은 문서로 나오는 결과라서 문서 기호예요.' },
+        { t: 'sym', node: 'end', ans: 'term', choices: ALL8, e: '끝도 타원이에요.' }
+      ] },
+    { chart: 'boss', sit: '이번에는 선물 포장을 고르지 않은 손님이에요. 말은 "선물 포장 ?" 칸에 있어요.',
+      from: 'cond', to: 'give', view: [0, 0, 360, 480],
+      hints: ['선물 포장이 아니라면 "아니오" 길이에요.', '"아니오" 길은 오른쪽으로 돌아서 내려가요.'],
+      steps: [
+        { t: 'yn', node: 'cond', ans: 'no', q: '선물 포장을 고르지 않았어요. 어느 길로 갈까요?', e: '선물 포장이 아니라서 "아니오" 길이에요.' },
+        { t: 'next', ans: 'give', cands: ['give', 'wrap', 'end'], e: '리본 포장을 건너뛰고 바로 "빵 내보내기" 칸으로 가요. 두 길이 다시 만나는 칸이에요.' }
+      ] }
+  ]}
+];
+/* ===== 게임 진행: 문제는 순서도 위에서 직접 풀어요 ===== */
+const $ = id => document.getElementById(id);
+const LET = ['가', '나', '다', '라', '마', '바', '사', '아', '자', '차', '카'];
+const SPECS = { main: MAIN, boss: BOSS, docdb: DOCDB, subconn: SUBCONN };
+const TOTAL = STAGES.reduce((a, s) => a + s.qs.reduce((b, q) => b + q.steps.length, 0), 0);
+let G;
+
+const spec = () => SPECS[(G.q && G.q.chart) || 'main'];
+const nodeText = id => (spec().nodes.find(n => n.id === id) || {}).t || id;
+const revKey = id => ((G.q && G.q.chart) || 'main') + ':' + id;
+const starsOf = d => '★'.repeat(d) + '☆'.repeat(3 - d);
+function shuffle(a) {
+  const r = a.slice();
+  for (let i = r.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [r[i], r[j]] = [r[j], r[i]]; }
+  return r;
+}
+
+function newGame() {
+  G = { stage: 0, qi: 0, si: 0, score: 0, perfect: STAGES.map(() => true), done: false, revealed: new Set(), full: false, log: [], ynDone: [], first: true, solved: false, tokenAt: null, ex: {}, cur: null, q: null };
+  $('hudTotal').textContent = TOTAL;
+  $('hudAll').textContent = STAGES.length;
+  $('mapToggle').hidden = false;
+  startQuestion();
+}
+
+function renderStrip() {
+  $('strip').innerHTML = STAGES.map((s, i) => `<span class="${i < G.stage ? 'done' : (i === G.stage ? 'now' : '')}">${i < G.stage ? '✔' : LET[i]}</span>`).join('');
+  $('hudStage').textContent = G.stage + 1;
+  $('hudScore').textContent = G.score;
+}
+
+function renderMap() {
+  const q = G.q, sp = spec();
+  const rev = new Set([...G.revealed].filter(k => k.startsWith(((q && q.chart) || 'main') + ':')).map(k => k.split(':')[1]));
+  const view = G.full || !q.view ? [0, 0, sp.w, sp.h] : q.view;
+  const o = Object.assign({}, G.ex, { uid: 'm' + G.stage + 'q' + G.qi + 's' + G.si + (G.full ? 'f' : 'v'), n: G.done ? 99 : G.stage + 1, view, revealed: rev, token: G.tokenAt, ynDone: G.ynDone });
+  $('map').innerHTML = drawFlow(sp, o);
+  $('map').classList.toggle('full', G.full);
+  $('mapToggle').textContent = G.full ? '이 부분만 보기' : '전체 보기';
+  $('mapCap').textContent = G.done ? '완성한 전체 순서도입니다.' : (G.full ? '전체 순서도를 보고 있습니다.' : '주황색 동그라미가 말이에요. 문제는 순서도 위에서 풀자.');
+}
+
+function moveToken(id) {
+  G.tokenAt = id;
+  const el = document.querySelector('#map .tok');
+  if (!el) return;
+  const p = nodePos(spec(), id);
+  el.getBoundingClientRect();
+  el.style.transform = `translate(${p[0]}px,${p[1]}px)`;
+}
+
+function startQuestion() {
+  const st = STAGES[G.stage];
+  G.q = st.qs[G.qi]; G.si = 0; G.log = []; G.ynDone = []; G.tokenAt = G.q.from; G.full = false;
+  $('card').hidden = false;
+  $('card').innerHTML = `<div class="know"><h4>${esc(st.know[0])}</h4><p>${esc(st.know[1])}</p></div>`
+    + G.q.hints.map((t, i) => `<div class="hint"><b>힌트 ${i + 1}</b> ${esc(t)}</div>`).join('')
+    + `<div class="diff">난이도 <span class="stars">${starsOf(st.diff)}</span></div>`;
+  renderStrip();
+  startStep();
+}
+
+function stepQuestion(S) {
+  if (S.q) return S.q;
+  if (S.t === 'sym') return `"${nodeText(S.node)}" 칸에 알맞은 기호는? 아래에서 골라 보세요.`;
+  if (S.t === 'yn') return '순서도에서 알맞은 길("예" 또는 "아니오")을 눌러 보세요.';
+  return '말이 다음에 도착할 칸은? 순서도에서 가, 나, 다 표시가 붙은 칸 중 하나를 눌러 보세요.';
+}
+
+function startStep() {
+  const st = STAGES[G.stage], q = G.q, S = q.steps[G.si];
+  G.cur = S; G.first = true; G.solved = false;
+  let h = `<div class="qhead"><span class="badge">${LET[G.stage]}. ${esc(st.name)}</span><span style="color:var(--sub);font-size:.9rem">문제 ${G.qi + 1} / ${st.qs.length}, 질문 ${G.si + 1} / ${q.steps.length}</span></div>`;
+  h += `<div class="sit"><b>상황</b> ${esc(q.sit)}</div>`;
+  if (G.log.length) h += `<div class="done-steps">${G.log.map(t => `<span>✔ ${esc(t)}</span>`).join('')}</div>`;
+  h += `<div class="step"><h3>${esc(stepQuestion(S))}</h3></div>`;
+  $('prompt').innerHTML = h;
+  $('fb').innerHTML = ''; $('nx').innerHTML = '';
+  const T = $('tray');
+  G.ex = { focus: [], ynState: {} };
+  if (S.t === 'sym') {
+    G.ex.blank = S.node;
+    const kinds = S.choices || ['term', 'io', 'proc', 'dec'];
+    T.innerHTML = `<div class="symgrid">${shuffle(kinds).map(k => `<button type="button" class="symbtn" data-k="${k}">${symSvg(k)}<span class="ko">${SYMDEF[k].ko}</span><span class="en">${SYMDEF[k].en}</span></button>`).join('')}</div>`;
+    T.querySelectorAll('.symbtn').forEach(b => b.addEventListener('click', () => onSym(b.dataset.k, b)));
+  } else if (S.t === 'yn') {
+    G.ex.ynNode = S.node; G.ex.focus = [S.node];
+    T.innerHTML = `<div class="yn"><button type="button" class="opt" data-yn="yes">예 길</button><button type="button" class="opt" data-yn="no">아니오 길</button></div>`;
+    T.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => onYn(b.dataset.yn)));
+  } else if (S.t === 'next') {
+    const order = shuffle(S.cands), labels = {};
+    order.forEach((id, k) => labels[id] = LET[k]);
+    G.ex.pick = { ids: order, labels, state: {} };
+    T.innerHTML = `<div class="opts">${order.map(id => `<button type="button" class="opt" data-id="${id}"><span class="n">${labels[id]}</span><span>${esc(nodeText(id))}</span></button>`).join('')}</div>`;
+    T.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => onNext(b.dataset.id)));
+  } else {
+    const idx = shuffle([0, 1, 2]);
+    T.innerHTML = `<div class="opts">${idx.map((o, k) => `<button type="button" class="opt" data-o="${o}"><span class="n">${k + 1}</span><span>${esc(S.opts[o])}</span></button>`).join('')}</div>`;
+    T.querySelectorAll('.opt').forEach(b => b.addEventListener('click', () => onMcq(+b.dataset.o, b)));
+  }
+  renderMap();
+}
+
+function fb(ok, title, text) {
+  $('fb').innerHTML = `<div class="msg ${ok ? 'ok' : 'no'}"><b>${esc(title)}</b><span>${esc(text)}</span></div>`;
+}
+
+function stepLog(S) {
+  if (S.t === 'sym') return `${nodeText(S.node)} 칸: ${SYMNAME[S.ans]}`;
+  if (S.t === 'yn') return `${nodeText(S.node)}: ${S.ans === 'yes' ? '예' : '아니오'} 길`;
+  if (S.t === 'next') return `다음 칸: ${nodeText(S.ans)}`;
+  return S.opts[0].length > 26 ? S.opts[0].slice(0, 26) + '...' : S.opts[0];
+}
+
+function solvedStep(S) {
+  G.solved = true;
+  if (G.first) G.score++; else G.perfect[G.stage] = false;
+  $('hudScore').textContent = G.score;
+  G.log.push(stepLog(S));
+  fb(true, '정답이에요!', S.e);
+  const last = G.si === G.q.steps.length - 1;
+  if (S.t === 'next') moveToken(S.ans);
+  if (last && G.tokenAt !== G.q.to) moveToken(G.q.to);
+  const lastStage = G.stage === STAGES.length - 1, lastQ = G.qi === STAGES[G.stage].qs.length - 1;
+  const label = !last ? '다음 질문 ▶' : (lastQ ? (lastStage ? '결과 보기 ▶' : '다음 단계로 ▶') : '다음 문제 ▶');
+  $('nx').innerHTML = `<button class="btn go" id="nextBtn" type="button">${label}</button>`;
+  $('nextBtn').addEventListener('click', advance);
+  $('nextBtn').focus({ preventScroll: true });
+}
+
+function advance() {
+  const st = STAGES[G.stage], last = G.si === G.q.steps.length - 1;
+  if (!last) { G.si++; startStep(); return; }
+  if (G.qi < st.qs.length - 1) { G.qi++; }
+  else if (G.stage < STAGES.length - 1) { G.stage++; G.qi = 0; }
+  else { G.done = true; renderFinal(); scrollTop(); return; }
+  startQuestion();
+  scrollTop();
+}
+function scrollTop() {
+  const reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  $('strip').scrollIntoView({ behavior: reduce ? 'auto' : 'smooth', block: 'start' });
+}
+
+/* ----- 기호 고르기 ----- */
+function onSym(k, btn) {
+  const S = G.cur;
+  if (G.solved || btn.disabled) return;
+  if (k === S.ans) {
+    btn.classList.add('right');
+    $('tray').querySelectorAll('.symbtn').forEach(b => b.disabled = true);
+    G.revealed.add(revKey(S.node));
+    (S.also || []).forEach(id => G.revealed.add(revKey(id)));
+    G.ex.blank = null;
+    renderMap();
+    solvedStep(S);
+  } else {
+    G.first = false; btn.classList.add('wrong'); btn.disabled = true;
+    fb(false, '아쉬워요. 다른 기호를 골라 보세요.', `${SYMNAME[k]}${josa(SYMNAME[k])} ${SYMMEAN[k]}에 쓰는 기호예요. 이 칸이 하는 일과 비교해 보세요.`);
+  }
+}
+
+/* ----- 예/아니오 길 누르기 ----- */
+function onYn(val) {
+  const S = G.cur;
+  if (G.solved) return;
+  const trayBtn = $('tray').querySelector(`[data-yn="${val}"]`);
+  if (val === S.ans) {
+    G.ynDone.push({ node: S.node, val });
+    G.ex.ynNode = null;
+    $('tray').querySelectorAll('.opt').forEach(b => b.disabled = true);
+    if (trayBtn) trayBtn.classList.add('right');
+    renderMap();
+    solvedStep(S);
+  } else {
+    G.first = false; G.ex.ynState[val] = 'wrong';
+    if (trayBtn) { trayBtn.classList.add('wrong'); trayBtn.disabled = true; }
+    renderMap();
+    fb(false, '아쉬워요. 조건을 다시 따져 보세요.', S.h || '조건에 값을 넣어서 맞는 말인지 틀린 말인지 먼저 따져 보세요. 힌트를 참고하세요.');
+  }
+}
+
+/* ----- 다음 칸 예측 ----- */
+function onNext(id) {
+  const S = G.cur;
+  if (G.solved || !G.ex.pick || !G.ex.pick.ids.includes(id)) return;
+  const trayBtn = $('tray').querySelector(`[data-id="${id}"]`);
+  if (id === S.ans) {
+    G.ex.pick.state[id] = 'right';
+    $('tray').querySelectorAll('.opt').forEach(b => b.disabled = true);
+    if (trayBtn) trayBtn.classList.add('right');
+    renderMap();
+    solvedStep(S);
+  } else {
+    G.first = false; G.ex.pick.state[id] = 'wrong';
+    if (trayBtn) { trayBtn.classList.add('wrong'); trayBtn.disabled = true; }
+    renderMap();
+    fb(false, '아쉬워요. 다른 칸을 골라 보세요.', S.w || '화살표가 이어진 다음 칸이 아니에요. 화살표 방향을 따라가 보세요.');
+  }
+}
+
+/* ----- 보기 고르기 ----- */
+function onMcq(o, btn) {
+  const S = G.cur;
+  if (G.solved || btn.disabled) return;
+  if (o === 0) {
+    btn.classList.add('right');
+    $('tray').querySelectorAll('.opt').forEach(b => b.disabled = true);
+    solvedStep(S);
+  } else {
+    G.first = false; btn.classList.add('wrong'); btn.disabled = true;
+    fb(false, '아쉬워요. 다른 보기를 골라 보세요.', S.m[o - 1]);
+  }
+}
+
+/* ----- 순서도 위 누르기(예/아니오 글자, 가나다 표시 칸) ----- */
+$('map').addEventListener('click', e => {
+  if (!G || G.done || G.solved) return;
+  const y = e.target.closest('[data-yn]');
+  if (y) { onYn(y.getAttribute('data-yn')); return; }
+  const n = e.target.closest('[data-node]');
+  if (n) onNext(n.getAttribute('data-node'));
+});
+$('map').addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const t = e.target.closest && e.target.closest('[data-yn],[data-node]');
+  if (t) { e.preventDefault(); t.dispatchEvent(new MouseEvent('click', { bubbles: true })); }
+});
+document.addEventListener('keydown', e => {
+  if (!G || G.done || G.solved || !G.cur || G.cur.t !== 'mcq' || !/^[1-3]$/.test(e.key)) return;
+  const b = $('tray').querySelectorAll('.opt')[+e.key - 1];
+  if (b) b.click();
+});
+$('mapToggle').addEventListener('click', () => {
+  if (!G || G.done) return;
+  G.full = !G.full;
+  renderMap();
+});
+
+/* ----- 결과 ----- */
+function renderFinal() {
+  const pct = Math.round(G.score / TOTAL * 100);
+  const n = pct >= 90 ? 3 : pct >= 70 ? 2 : 1;
+  const perfect = G.perfect.filter(Boolean).length;
+  G.q = { chart: 'main', view: [0, 0, MAIN.w, MAIN.h] }; G.full = true; G.ex = {}; G.tokenAt = 'end'; G.ynDone = [];
+  renderStrip();
+  $('strip').innerHTML = STAGES.map(() => '<span class="done">✔</span>').join('');
+  $('hudStage').textContent = STAGES.length;
+  $('card').hidden = true; $('tray').innerHTML = ''; $('fb').innerHTML = ''; $('nx').innerHTML = '';
+  $('mapToggle').hidden = true;
+  $('prompt').innerHTML = `<div class="finalbox">
+    <span class="badge">게임 클리어</span>
+    <h2>무인 베이커리 순서도를 완성했습니다</h2>
+    <p style="margin:0 0 10px"><span class="stars" style="font-size:1.6rem">${'★'.repeat(n)}${'☆'.repeat(3 - n)}</span></p>
+    <div class="know"><h4>내 기록</h4><p>한 번에 맞힌 질문 ${G.score} / ${TOTAL} (100점 환산 ${pct}점), 모든 질문을 한 번에 푼 단계 ${perfect} / ${STAGES.length}</p></div>
+    <div class="know"><h4>오늘 익힌 것</h4><p>타원(단말)은 시작과 끝, 화살표(흐름선)는 순서, 평행사변형(입출력)은 입력과 출력, 직사각형(처리)은 계산, 마름모(판단)는 예와 아니오 질문입니다. 실무에서 자주 쓰는 문서, 데이터베이스, 미리 정의된 처리(서브루틴), 연결자도 익혔습니다. 아래 순서도는 키오스크의 전체 흐름이고, 위의 기호 사전에서 영문과 우리말 이름을 다시 볼 수 있습니다.</p></div>
+    <div class="row"><button class="btn" id="again" type="button">처음부터 다시 하기</button></div>
+  </div>`;
+  $('again').addEventListener('click', newGame);
+  renderMap();
+}
+
+/* ----- 기호 사전 ----- */
+function renderDict() {
+  const order = ['term', 'arrow', 'io', 'proc', 'dec', 'doc', 'db', 'sub', 'conn', 'hex', 'manual', 'display'];
+  $('dictBody').innerHTML = `<p class="dnote">구분은 대략적인 기준이에요. 교과서와 도구(draw.io, 비지오 등)마다 우리말 이름이 조금씩 달라요.</p>`
+    + `<div class="dlist">${order.map(k => { const d = SYMDEF[k]; return `<div class="drow"><div class="dsym">${symSvg(k)}</div><div class="dtxt"><div><b>${esc(d.ko)}</b> <span class="den">${esc(d.en)}</span></div><div class="duse">${esc(d.use)}</div><span class="dlv lv${d.lv === '기본' ? 1 : d.lv === '참고' ? 3 : 2}">${esc(d.lv)}</span></div></div>`; }).join('')}</div>`;
+}
+renderDict();
+newGame();
+</script>
+</body>
+</html>

@@ -288,6 +288,21 @@ header p{margin:4px 0 0;font-size:.95rem;color:var(--sub)}
 .tile .tok{background:var(--tok);box-shadow:0 0 0 2px var(--tok)}
 button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid var(--lav);outline-offset:3px}
 @media (prefers-reduced-motion:reduce){*{animation:none !important;transition:none !important}}
+
+/* ===== 순서도: 연한 푸른색 ===== */
+:root{--fc-bg:#f3f8fd; --fc-fill:#e3eefa; --fc-fill2:#cfe2f5; --fc-stroke:#4f86bf; --fc-ln:#6f8fb2; --fc-neutral:#eef3f9; --fc-neutral-st:#9db3cb}
+.mapbox,.fcbox{background:var(--fc-bg);border-color:#d3e1f0}
+.fc .sh{fill:var(--fc-fill);stroke:var(--fc-stroke)}
+.fc .sh.term{fill:var(--fc-fill2)}
+.fc .ln{stroke:var(--fc-ln)}
+.fc .neutral .sh{fill:var(--fc-neutral);stroke:var(--fc-neutral-st)}
+.fc .blank .sh{fill:var(--fc-neutral);stroke:var(--bad)}
+.fc .hit .sh{fill:var(--fc-fill2)}
+.fc .focus .sh{fill:var(--fc-fill2);stroke:var(--accent-ink)}
+.fc .pickable .sh{fill:var(--fc-fill2)}
+.fc .pickable:hover .sh{fill:#ffffff}
+.fc .ynbtn rect{fill:#ffffff}
+.fc .ynbtn:hover rect,.fc .ynbtn:focus rect{fill:var(--fc-fill2)}
 </style>
 </head>
 <body>

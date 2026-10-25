@@ -357,6 +357,14 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
 .opt.right .n{background:var(--ok);color:#fff}
 .opt.wrong .n{background:var(--bad);color:#fff}
 .symbtn svg [style]{stroke:var(--q) !important}
+
+/* 알아두기, 힌트: HTML 퀴즈와 같은 구성 (알아두기는 위, 힌트는 보기 아래) */
+.know{background:#f9fbfc;border:2px solid #ddd7e6;border-radius:16px;padding:12px 16px;margin:12px 0}
+.know .kt{display:block;font-weight:700;font-size:1.08rem;color:#415e75;margin-bottom:4px}
+.know p{margin:0;line-height:1.5}
+.hints{background:#faf7ef;border:2px solid #ddd7e6;border-radius:16px;padding:10px 16px;margin:16px 0 0;display:flex;flex-direction:column;gap:6px}
+.hints .hint{margin:0;display:block}
+.hints .hint b{color:#725d28}
 </style>
 </head>
 <body>
@@ -376,12 +384,12 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
       <span><b id="hudStage">1</b> / <span id="hudAll">11</span> 단계</span>
     </div>
     <div id="prompt"></div>
-    <div id="hintBox"></div>
     <div class="mapbar"><span class="cap" id="mapCap"></span><button class="sbtn" id="mapToggle" type="button">전체 보기</button></div>
     <div class="mapbox"><div id="map"></div></div>
     <div id="tray"></div>
     <div id="fb"></div>
     <div class="center" id="nx"></div>
+    <div id="hintBox"></div>
   </section>
 
   <section class="big" id="card" aria-label="알아두기와 힌트"></section>
@@ -1016,9 +1024,8 @@ function moveToken(id) {
 function startQuestion() {
   const st = STAGES[G.stage];
   G.q = st.qs[G.qi]; G.si = 0; G.log = []; G.ynDone = []; G.tokenAt = G.q.from; G.full = false;
-  $('card').hidden = false;
-  $('hintBox').innerHTML = `<div class="hints"><div class="ht"><span class="qmark" aria-hidden="true">?</span><b>힌트</b></div>` + G.q.hints.map((t, i) => `<p class="hint"><span class="hn">${i + 1}.</span> ${esc(t)}</p>`).join('') + `</div>`;
-  $('card').innerHTML = `<div class="know"><h4>${esc(st.know[0])}</h4><p>${esc(st.know[1])}</p></div>`
+  $('card').hidden = true;
+  $('hintBox').innerHTML = `<div class="hints">` + G.q.hints.map((t, i) => `<p class="hint"><span aria-hidden="true">💡</span> <b>힌트 ${i + 1}</b> ${esc(t)}</p>`).join('') + `</div>`
     + `<div class="diff">난이도 <span class="stars">${starsOf(st.diff)}</span></div>`;
   renderStrip();
   startStep();
@@ -1035,6 +1042,7 @@ function startStep() {
   const st = STAGES[G.stage], q = G.q, S = q.steps[G.si];
   G.cur = S; G.first = true; G.solved = false;
   let h = `<div class="qhead"><span class="badge">${LET[G.stage]}. ${esc(st.name)}</span></div>`;
+  h += `<div class="know"><span class="kt"><span aria-hidden="true">📘</span> 알아두기</span><p>${esc(st.know[1])}</p></div>`;
   h += `<div class="sit"><b>상황</b> ${esc(q.sit)}</div>`;
   if (G.log.length) h += `<div class="done-steps">${G.log.map(t => `<span>✔ ${esc(t)}</span>`).join('')}</div>`;
   h += `<div class="step"><h3>${esc(stepQuestion(S))}</h3></div>`;

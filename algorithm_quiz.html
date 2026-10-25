@@ -37,7 +37,7 @@ body{
   padding-right:max(16px,env(safe-area-inset-right,0px));
 }
 .wrap{max-width:680px;margin:0 auto;display:flex;flex-direction:column;gap:16px;min-width:0}
-header .pre{font-weight:700;color:var(--accent-ink);font-size:min(.95rem,3.6vw)}
+header .pre{font-weight:700;color:#7a5a3a;font-size:min(.95rem,3.6vw)}
 header h1{margin:2px 0 4px;font-size:clamp(1.6rem,6vw,2.1rem);line-height:1.15;text-wrap:balance}
 header p{margin:0;color:var(--sub)}
 .box{background:var(--card);border:2px solid var(--line);border-radius:14px;padding:16px;min-width:0}
@@ -218,11 +218,10 @@ footer a{color:var(--sub)}
 a.crumb:hover{border-color:var(--hover)}
 .crumb:active{transform:translateY(2px);box-shadow:0 1px 0 var(--shadow)}
 .crumb-sep{color:var(--sub);font-weight:800}
-  .crumb.cur{display:inline-flex;align-items:baseline;gap:10px;cursor:default;box-shadow:none;background:none;border:0;border-radius:0;padding:0 2px;font-size:1.2rem;color:var(--accent-ink)}
+  .crumb.cur{display:inline-flex;align-items:baseline;gap:10px;cursor:default;box-shadow:none;background:none;border:0;border-radius:0;padding:0 2px;font-size:1.2rem;color:#6f5a45}
   .crumb.cur:active{transform:none}
-  .crumb.cur small{font-size:.82rem;font-weight:800;color:var(--accent);background:none;padding:0}
   .crumb.cur b{font-weight:800;font-size:1.2rem}
-  .crumb.cur .stp{font-size:1.4rem;font-weight:800;color:var(--accent)}
+  .crumb.cur .stp{font-size:1.4rem;font-weight:800;color:#946f4a}
   .crumb-sep{font-size:1.2rem}
 footer a.back{font-weight:700;color:var(--fg);text-decoration:none}
 footer a.back:hover,footer a.credit:hover{text-decoration:underline;text-underline-offset:3px}
@@ -231,7 +230,7 @@ footer a.credit{font-weight:700;color:var(--fg);text-decoration:none}
 </head>
 <body>
 <div class="wrap">
-  <nav class="crumbs topbar" aria-label="현재 위치"><a class="crumb" href="index.html">메인 페이지</a><span class="crumb-sep" aria-hidden="true">›</span><span class="crumb cur" aria-current="page"><small>현위치</small><b>알고리즘 순서도 보드게임</b></span></nav>
+  <nav class="crumbs topbar" aria-label="현재 위치"><a class="crumb" href="index.html">메인 페이지</a><span class="crumb-sep" aria-hidden="true">›</span><span class="crumb cur" aria-current="page"><b>알고리즘 순서도 보드게임</b></span></nav>
   <header>
     <div class="pre">고등학생을 위한</div>
     <h1>무인 베이커리 알고리즘 보드게임</h1>

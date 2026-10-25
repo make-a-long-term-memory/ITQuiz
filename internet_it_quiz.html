@@ -43,16 +43,24 @@
   b,strong{font-weight:700}
 
   /* 현재 위치(이동 경로) */
-  .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+  .crumbs{display:flex;flex-wrap:nowrap;white-space:nowrap;align-items:center;gap:6px 8px}
   .crumb{display:inline-block;font-family:var(--font);font-weight:700;font-size:.92rem;line-height:1.4;color:var(--ink);background:#ffffff;border:2px solid #ddd7e6;border-radius:999px;padding:5px 14px;box-shadow:0 3px 0 #c9c2d5;text-decoration:none;cursor:pointer}
   a.crumb:hover,button.crumb:hover{border-color:#b5adc6}
   .crumb:active{transform:translateY(2px);box-shadow:0 1px 0 #c9c2d5}
   .crumb-sep{color:var(--ink-soft);font-weight:800}
-  .crumb.cur{display:inline-flex;align-items:baseline;gap:10px;cursor:default;box-shadow:none;background:none;border:0;border-radius:0;padding:0 2px;font-size:1.2rem;color:#33303c}
+  .crumb.cur{display:inline-flex;align-items:baseline;gap:10px;cursor:default;box-shadow:none;background:none;border:0;border-radius:0;padding:0 2px;font-size:.92rem;min-width:0;color:#33303c}
   .crumb.cur:active{transform:none}
-  .crumb.cur b{font-weight:800;font-size:1.2rem}
-  .crumb.cur .stp{font-size:1.25rem;font-weight:800;color:#33303c}
-  .crumb-sep{font-size:1.2rem}
+  .crumb.cur b{font-weight:800;font-size:inherit}
+  .crumb.cur .stp{font-size:inherit;font-weight:800}
+  .crumb-sep{font-size:1rem}
+  .crumb .sm{display:none}
+  @media (max-width:600px){
+    .crumb .lg{display:none}
+    .crumb .sm{display:inline}
+    .crumbs{gap:4px 6px}
+    .crumb{padding:5px 12px;font-size:1rem}
+    .crumb.cur{padding:0 2px;font-size:1rem}
+  }
   .menu-crumbs{margin:0 0 14px}
   .crumbs{margin:0 0 12px;padding:0 4px}
   .top{display:flex;align-items:center;gap:14px;margin-bottom:18px;padding:0 4px}
@@ -359,7 +367,7 @@
 </head>
 <body>
 <div class="app">
-  <nav class="crumbs" aria-label="현재 위치"><a class="crumb" href="index.html">메인 페이지</a><span class="crumb-sep" aria-hidden="true">›</span><span class="crumb cur" aria-current="page"><b>인터넷과 IT 서비스 퀴즈</b></span></nav>
+  <nav class="crumbs" aria-label="현재 위치"><a class="crumb" href="index.html"><span class="lg">메인 페이지</span><span class="sm">메인</span></a><span class="crumb-sep" aria-hidden="true">›</span><span class="crumb cur" aria-current="page"><b><span class="lg">인터넷과 IT 서비스 퀴즈</span><span class="sm">IT 서비스</span></b></span></nav>
   <header class="top">
     <div class="mascot" aria-hidden="true">🛰️</div>
     <div>

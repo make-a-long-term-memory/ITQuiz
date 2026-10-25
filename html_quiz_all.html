@@ -76,16 +76,24 @@
   .bar-title{flex:1 1 100%;min-width:0;font-weight:800;font-size:1rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 
   /* 현재 위치(이동 경로) */
-  .crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px}
+  .crumbs{display:flex;flex-wrap:nowrap;white-space:nowrap;align-items:center;gap:6px 8px}
   .crumb{display:inline-block;font-family:var(--font);font-weight:700;font-size:.92rem;line-height:1.4;color:var(--ink);background:#ffffff;border:2px solid #ddd7e6;border-radius:999px;padding:5px 14px;box-shadow:0 3px 0 #c9c2d5;text-decoration:none;cursor:pointer}
   a.crumb:hover,button.crumb:hover{border-color:#b5adc6}
   .crumb:active{transform:translateY(2px);box-shadow:0 1px 0 #c9c2d5}
   .crumb-sep{color:var(--ink-soft);font-weight:800}
-  .crumb.cur{display:inline-flex;align-items:baseline;gap:10px;cursor:default;box-shadow:none;background:none;border:0;border-radius:0;padding:0 2px;font-size:1.2rem;color:#33303c}
+  .crumb.cur{display:inline-flex;align-items:baseline;gap:10px;cursor:default;box-shadow:none;background:none;border:0;border-radius:0;padding:0 2px;font-size:.92rem;min-width:0;color:#33303c}
   .crumb.cur:active{transform:none}
-  .crumb.cur b{font-weight:800;font-size:1.2rem}
-  .crumb.cur .stp{font-size:1.25rem;font-weight:800;color:#33303c}
-  .crumb-sep{font-size:1.2rem}
+  .crumb.cur b{font-weight:800;font-size:inherit}
+  .crumb.cur .stp{font-size:inherit;font-weight:800}
+  .crumb-sep{font-size:1rem}
+  .crumb .sm{display:none}
+  @media (max-width:600px){
+    .crumb .lg{display:none}
+    .crumb .sm{display:inline}
+    .crumbs{gap:4px 6px}
+    .crumb{padding:5px 12px;font-size:1rem}
+    .crumb.cur{padding:0 2px;font-size:1rem}
+  }
   .menu-crumbs{margin:0 0 14px}
   .frames{flex:1;position:relative}
   .frames iframe{position:absolute;inset:0;width:100%;height:100%;border:0;background:transparent}
@@ -196,9 +204,9 @@
 <body>
 <main id="menu">
   <nav class="crumbs menu-crumbs" aria-label="현재 위치">
-    <a class="crumb" href="index.html">메인 페이지</a>
+    <a class="crumb" href="index.html"><span class="lg">메인 페이지</span><span class="sm">메인</span></a>
     <span class="crumb-sep" aria-hidden="true">›</span>
-    <span class="crumb cur" aria-current="page"><b>HTML 퀴즈 모음</b></span>
+    <span class="crumb cur" aria-current="page"><b><span class="lg">HTML 퀴즈 모음</span><span class="sm">HTML</span></b></span>
   </nav>
   <header class="top">
     <div class="mascot" aria-hidden="true"><svg class="globe" viewBox="0 0 64 64" aria-hidden="true"><defs><clipPath id="gC"><circle cx="32" cy="32" r="27"/></clipPath><clipPath id="gE"><ellipse cx="32" cy="32" rx="11" ry="27"/></clipPath></defs><g clip-path="url(#gC)"><rect x="5" y="5" width="27" height="14" fill="#b3d8f8"/><rect x="32" y="5" width="27" height="14" fill="#5595dc"/><rect x="5" y="19" width="27" height="13" fill="#8fbeed"/><rect x="32" y="19" width="27" height="13" fill="#427ec8"/><rect x="5" y="32" width="27" height="13" fill="#6ba5e3"/><rect x="32" y="32" width="27" height="13" fill="#3368b1"/><rect x="5" y="45" width="27" height="14" fill="#4b8cd6"/><rect x="32" y="45" width="27" height="14" fill="#24529a"/></g><g clip-path="url(#gE)"><rect x="21" y="5" width="11" height="14" fill="#94c2ef"/><rect x="32" y="5" width="11" height="14" fill="#74abe5"/><rect x="21" y="19" width="11" height="13" fill="#70a8e4"/><rect x="32" y="19" width="11" height="13" fill="#5092db"/><rect x="21" y="32" width="11" height="13" fill="#4d8fd9"/><rect x="32" y="32" width="11" height="13" fill="#407bc5"/><rect x="21" y="45" width="11" height="14" fill="#3e78c2"/><rect x="32" y="45" width="11" height="14" fill="#3165ae"/></g><g fill="none" stroke="#ffffff" stroke-width="3"><ellipse cx="32" cy="32" rx="11" ry="27"/><path d="M5 32H59M8.5 19H55.5M8.5 45H55.5M32 5V59"/></g></svg></div>
@@ -208,7 +216,7 @@
       <p>처음 배우는 사람을 위한 3단계 퀴즈</p>
     </div>
   </header>
-  <div class="guide">HTML이 처음이라면 <b>워밍업 OX 퀴즈</b>로 시작해서 <b>1단계부터 차례대로</b> 풀어 보자. 모든 문제에 힌트가 함께 보입니다. 퀴즈를 풀다가 위쪽 <b>HTML 퀴즈 모음</b>을 눌러도 푼 내용은 그대로 남아 있습니다.</div>
+  <div class="guide">HTML이 처음이라면 <b>워밍업 OX 퀴즈</b>로 시작해서 <b>1단계부터 차례대로</b> 풀어 보자. 모든 문제에 힌트가 함께 보입니다. 퀴즈를 풀다가 위쪽 <b><span class="lg">HTML 퀴즈 모음</span><span class="sm">HTML</span></b>을 눌러도 푼 내용은 그대로 남아 있습니다.</div>
   <div class="list">
     <button class="quiz-card" data-quiz="ox" data-title="워밍업, HTML OX 퀴즈" type="button">
       <span class="qc-icon" style="background:#ecf3f9">⭕</span>
@@ -256,9 +264,9 @@
 
 <div id="player" class="hidden">
   <nav class="bar crumbs" aria-label="현재 위치">
-    <a class="crumb" href="index.html">메인 페이지</a>
+    <a class="crumb" href="index.html"><span class="lg">메인 페이지</span><span class="sm">메인</span></a>
     <span class="crumb-sep" aria-hidden="true">›</span>
-    <button class="crumb" id="backBtn" type="button">HTML 퀴즈 모음</button>
+    <button class="crumb" id="backBtn" type="button"><span class="lg">HTML 퀴즈 모음</span><span class="sm">HTML</span></button>
     <span class="crumb-sep" aria-hidden="true">›</span>
     <span class="crumb cur" aria-current="page"><b id="barTitle"></b></span>
   </nav>
@@ -4716,8 +4724,9 @@ function openQuiz(key, title){
   const bt = document.getElementById("barTitle");
   const txt = stepEl ? stepEl.textContent : title, ci = txt.indexOf(",");
   bt.textContent = "";
-  if (ci > 0){ const sp = document.createElement("span"); sp.className = "stp"; sp.textContent = txt.slice(0, ci); bt.appendChild(sp); bt.appendChild(document.createTextNode(txt.slice(ci))); }
-  else bt.textContent = txt;
+  const lgEl = document.createElement("span"); lgEl.className = "lg"; lgEl.textContent = txt;
+  const smEl = document.createElement("span"); smEl.className = "sm"; smEl.textContent = ci > 0 ? txt.slice(0, ci) : txt;
+  bt.appendChild(lgEl); bt.appendChild(smEl);
   bt.parentNode.title = title;
   document.getElementById("menu").classList.add("hidden");
   document.getElementById("player").classList.remove("hidden");

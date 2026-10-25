@@ -326,6 +326,37 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
 .hints .ht b{color:#6a5320;font-size:1rem}
 .qmark{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:50%;border:2px solid #6a5320;color:#6a5320;font-weight:800;font-size:.8rem;line-height:1}
 .hints .hint .hn{font-weight:700;color:#6a5320;margin-right:2px}
+
+/* ===== 문제 칸과 보기는 같은 주황색(진하게), 나머지 순서도는 회색 ===== */
+:root{--q:#e8730c; --q-ink:#b85500; --q-soft:#fdeedd; --q-sh:#f1c595; --g-fill:#f1f1f4; --g-fill2:#e3e3e8; --g-neutral:#f6f6f8; --g-st:#8c8c99; --g-ln:#8d8d99}
+.mapbox,.fcbox{background:#f7f7f9;border-color:#dcdce2}
+.fc .sh{fill:var(--g-fill);stroke:var(--g-st)}
+.fc .sh.term{fill:var(--g-fill2)}
+.fc .sh2{stroke:var(--g-st)}
+.fc .ln{stroke:var(--g-ln)}
+.fc .lb{fill:#555563}
+.fc .neutral .sh{fill:var(--g-neutral);stroke:#c4c4cc}
+.fc .blank .sh{fill:var(--q-soft);stroke:var(--q);stroke-width:3.4}
+.fc .blank text{fill:var(--q-ink);font-weight:700}
+.fc .hit .sh{fill:var(--g-fill2)}
+.fc .focus .sh{fill:var(--g-fill2);stroke:#55555f}
+.fc .on{stroke:var(--q);stroke-width:3.4}
+.fc .pickable .sh{fill:var(--q-soft);stroke:var(--q)}
+.fc .pickable:hover .sh{fill:#fff}
+.fc .pbadge circle{fill:var(--q)}
+.fc .ynbtn rect{fill:#fff;stroke:var(--q)}
+.fc .ynbtn text{fill:var(--q-ink)}
+.fc .ynbtn:hover rect,.fc .ynbtn:focus rect{fill:var(--q-soft)}
+.fc .tok{fill:none;stroke:none;transition:transform .7s ease}
+.fc .tok circle{fill:var(--q);stroke:#fff;stroke-width:3}
+.fc .tok text{fill:#fff;stroke:none;font-size:18px;font-weight:800}
+.opt,.symbtn,.chip{border-color:var(--q);box-shadow:0 4px 0 var(--q-sh)}
+.opt:hover:not(:disabled),.symbtn:hover:not(:disabled),.chip:hover:not(:disabled){border-color:var(--q);box-shadow:0 6px 0 var(--q)}
+.opt.right,.opt.wrong,.symbtn.right,.symbtn.wrong{border-color:var(--q);box-shadow:0 4px 0 var(--q-sh)}
+.opt .n{background:var(--q-soft);color:var(--q-ink)}
+.opt.right .n{background:var(--ok);color:#fff}
+.opt.wrong .n{background:var(--bad);color:#fff}
+.symbtn svg [style]{stroke:var(--q) !important}
 </style>
 </head>
 <body>
@@ -468,7 +499,7 @@ function drawFlow(spec, o) {
   }
   if (o.token) {
     const p = nodePos(spec, o.token);
-    out += `<circle class="tok" r="10" cx="0" cy="0" style="transform:translate(${p[0]}px,${p[1]}px)"/>`;
+    out += `<g class="tok" style="transform:translate(${p[0]}px,${p[1]}px)"><circle r="14" cx="0" cy="0"/><text x="0" y="6" text-anchor="middle">?</text></g>`;
   }
   return out + '</svg>';
 }

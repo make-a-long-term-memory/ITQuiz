@@ -373,6 +373,9 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
 .fc .pickable.neutral:hover .sh{fill:#fff}
 .fc .pickable.neutral.wrong .sh{fill:var(--badbg);stroke:var(--bad)}
 .fc .pickable.neutral.right .sh{fill:var(--okbg);stroke:var(--ok)}
+.fc .nd.cur .sh{fill:var(--q-soft);stroke:var(--q);stroke-width:3.4}
+.fc .nd.cur .sh2{stroke:var(--q)}
+.fc .nd.cur text,.fc .nd.curn text{fill:var(--q-ink);font-weight:800}
 </style>
 </head>
 <body>
@@ -496,6 +499,7 @@ function drawFlow(spec, o) {
     let cls = real ? '' : 'neutral';
     if (isBlank) cls = 'blank';
     if (o.focus && o.focus.includes(n.id) && !isBlank) cls += ' focus';
+    if (o.token === n.id && !isBlank) cls += real ? ' cur' : ' curn';
     let attrs = '', badge = '';
     if (o.pick && o.pick.ids.includes(n.id)) {
       const st = (o.pick.state && o.pick.state[n.id]) || '';

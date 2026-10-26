@@ -363,8 +363,8 @@ button:focus-visible,.opt:focus-visible,.slot:focus-visible,input:focus-visible,
 .fc .neutral .sh,.fc .blank .sh,.fc .focus.neutral .sh{fill:transparent;stroke:transparent}
 .fc .neutral text{fill:#44444f}
 .fc .blank text{fill:var(--q-ink);font-weight:800}
-.fc .pickable.neutral .sh{fill:var(--q-soft);stroke:var(--q)}
-.fc .pickable.neutral:hover .sh{fill:#fff}
+.fc .pickable.neutral .sh{fill:transparent;stroke:transparent}
+.fc .pickable.neutral:hover .sh,.fc .pickable.neutral:focus .sh{fill:var(--q-soft);stroke:transparent}
 .fc .pickable.neutral.wrong .sh{fill:var(--badbg);stroke:var(--bad)}
 .fc .pickable.neutral.right .sh{fill:var(--okbg);stroke:var(--ok)}
 .fc .nd.cur .sh{fill:var(--q-soft);stroke:var(--q);stroke-width:3.4}
